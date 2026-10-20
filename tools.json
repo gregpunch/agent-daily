@@ -1,0 +1,205 @@
+[
+ {
+  "name": "OpenAI API",
+  "cat": "LLM",
+  "probe": "https://api.openai.com/v1/models",
+  "ok": [
+   200,
+   401
+  ],
+  "status": "https://status.openai.com/api/v2/status.json"
+ },
+ {
+  "name": "Anthropic API",
+  "cat": "LLM",
+  "probe": "https://api.anthropic.com/v1/models",
+  "ok": [
+   200,
+   401,
+   404
+  ],
+  "status": "https://status.anthropic.com/api/v2/status.json"
+ },
+ {
+  "name": "Hugging Face Hub",
+  "cat": "LLM",
+  "probe": "https://huggingface.co/api/models?limit=1",
+  "ok": [
+   200
+  ],
+  "status": null
+ },
+ {
+  "name": "GitHub API",
+  "cat": "Dev",
+  "probe": "https://api.github.com/user",
+  "ok": [
+   200
+  ],
+  "status": "https://www.githubstatus.com/api/v2/status.json",
+  "auth": "github",
+  "expect_login": "gregpunch"
+ },
+ {
+  "name": "GitHub MCP (remote)",
+  "cat": "MCP",
+  "probe": "https://api.githubcopilot.com/mcp/",
+  "ok": [
+   200,
+   405
+  ],
+  "status": null,
+  "auth": "github"
+ },
+ {
+  "name": "Linear MCP",
+  "cat": "MCP",
+  "probe": "https://mcp.linear.app/mcp",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": "https://linearstatus.com/api/v2/status.json"
+ },
+ {
+  "name": "DeepWiki MCP",
+  "cat": "MCP",
+  "probe": "https://mcp.deepwiki.com/mcp",
+  "ok": [
+   200,
+   400,
+   405,
+   406
+  ],
+  "status": null
+ },
+ {
+  "name": "Stripe API",
+  "cat": "Payments",
+  "probe": "https://api.stripe.com/v1/charges",
+  "ok": [
+   401
+  ],
+  "status": null
+ },
+ {
+  "name": "Slack API",
+  "cat": "Comms",
+  "probe": "https://slack.com/api/api.test",
+  "ok": [
+   200
+  ],
+  "status": null,
+  "slack": "https://slack-status.com/api/v2.0.0/current"
+ },
+ {
+  "name": "Discord API",
+  "cat": "Comms",
+  "probe": "https://discord.com/api/v10/gateway",
+  "ok": [
+   200
+  ],
+  "status": "https://discordstatus.com/api/v2/status.json"
+ },
+ {
+  "name": "Twilio API",
+  "cat": "Comms",
+  "probe": "https://api.twilio.com/2010-04-01.json",
+  "ok": [
+   200,
+   401
+  ],
+  "status": "https://status.twilio.com/api/v2/status.json"
+ },
+ {
+  "name": "Google APIs",
+  "cat": "Platform",
+  "probe": "https://www.googleapis.com/discovery/v1/apis?name=gmail",
+  "ok": [
+   200
+  ],
+  "status": null
+ },
+ {
+  "name": "Cloudflare API",
+  "cat": "Infra",
+  "probe": "https://api.cloudflare.com/client/v4/ips",
+  "ok": [
+   200
+  ],
+  "status": "https://www.cloudflarestatus.com/api/v2/status.json"
+ },
+ {
+  "name": "Vercel",
+  "cat": "Infra",
+  "probe": "https://api.vercel.com/v2/user",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://www.vercel-status.com/api/v2/status.json"
+ },
+ {
+  "name": "Supabase",
+  "cat": "Infra",
+  "probe": "https://api.supabase.com/v1/projects",
+  "ok": [
+   401
+  ],
+  "status": "https://status.supabase.com/api/v2/status.json"
+ },
+ {
+  "name": "Brave Search API",
+  "cat": "Search",
+  "probe": "https://api.search.brave.com/res/v1/web/search?q=test",
+  "ok": [
+   401,
+   422,
+   429
+  ],
+  "status": null
+ },
+ {
+  "name": "Serper",
+  "cat": "Search",
+  "probe": "https://google.serper.dev/search",
+  "ok": [
+   400,
+   401,
+   403,
+   405
+  ],
+  "status": null
+ },
+ {
+  "name": "Wikipedia API",
+  "cat": "Knowledge",
+  "probe": "https://en.wikipedia.org/api/rest_v1/page/summary/Agent",
+  "ok": [
+   200
+  ],
+  "status": null
+ },
+ {
+  "name": "OpenStreetMap Nominatim",
+  "cat": "Maps",
+  "probe": "https://nominatim.openstreetmap.org/search?q=Paris&format=json&limit=1",
+  "ok": [
+   200
+  ],
+  "status": null
+ },
+ {
+  "name": "Atlassian (Jira/Confluence)",
+  "cat": "Productivity",
+  "probe": "https://api.atlassian.com/",
+  "ok": [
+   200,
+   401,
+   404
+  ],
+  "status": "https://status.atlassian.com/api/v2/status.json"
+ }
+]

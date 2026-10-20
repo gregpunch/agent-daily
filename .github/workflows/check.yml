@@ -1,0 +1,28 @@
+name: check
+on:
+  schedule: [{cron: "0 * * * *"}]
+  workflow_dispatch:
+permissions: {contents: read, pages: write, id-token: write}
+concurrency: {group: pages, cancel-in-progress: false}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment: {name: github-pages, url: "${{ steps.deploy.outputs.page_url }}"}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install requests
+      - name: Restore history
+        uses: actions/cache/restore@v4
+        with: {path: results.db, key: "results-${{ github.run_id }}", restore-keys: "results-"}
+      - name: Check + build
+        env: {GITHUB_TOKEN: "${{ secrets.GH_CHECK_TOKEN }}"}
+        run: python check.py && python build.py
+      - uses: actions/cache/save@v4
+        with: {path: results.db, key: "results-${{ github.run_id }}"}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: {path: site}
+      - id: deploy
+        uses: actions/deploy-pages@v4
