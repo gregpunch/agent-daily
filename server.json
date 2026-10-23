@@ -6,5 +6,5 @@
   "version": "0.1.0",
   "repository": { "url": "https://github.com/gregpunch/agent-daily", "source": "github" },
   "websiteUrl": "https://gregpunch.github.io/agent-daily/",
-  "remotes": [ { "type": "streamable-http", "url": "https://agent-daily.WORKERS_SUBDOMAIN.workers.dev/mcp" } ]
+  "remotes": [ { "type": "streamable-http", "url": "https://agent-daily.agentdaily.workers.dev/mcp" } ]
 }

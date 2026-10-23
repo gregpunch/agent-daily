@@ -7,6 +7,11 @@ Built for agent builders. Check before your agent calls a tool, fall back when a
 - Status page: https://gregpunch.github.io/agent-daily/
 - Machine-readable: https://gregpunch.github.io/agent-daily/status.json
 - Agent guide: https://gregpunch.github.io/agent-daily/llms.txt
+- **MCP server (no key): https://agent-daily.agentdaily.workers.dev/mcp**, with tools `list_tools`, `tool_status`
+
+```
+claude mcp add --transport http agent-daily https://agent-daily.agentdaily.workers.dev/mcp
+```
 
 ## Consume status.json
 ```python

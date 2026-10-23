@@ -8,6 +8,10 @@
 - If generated_at is older than ~2 hours, treat the data as stale.
 - Please cache; fetch at most once every few minutes.
 
+## MCP server
+- Remote MCP (Streamable HTTP, no auth, read-only): https://agent-daily.agentdaily.workers.dev/mcp
+- Tools: list_tools(category?) and tool_status(name). Both are backed by status.json with a 5-minute cache.
+
 ## Update cadence
 Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each run.
 
