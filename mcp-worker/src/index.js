@@ -67,6 +67,12 @@ async function rpc(m) {
 }
 
 export default {
+  async scheduled(event, env, ctx) {
+    const r = await fetch("https://api.github.com/repos/gregpunch/agent-daily/actions/workflows/check.yml/dispatches", {
+      method: "POST", headers: { authorization: `Bearer ${env.GH_DISPATCH_TOKEN}`, accept: "application/vnd.github+json", "user-agent": "agent-daily-cron", "content-type": "application/json" },
+      body: JSON.stringify({ ref: "main" }) });
+    if (r.status !== 204) throw new Error(`dispatch failed HTTP ${r.status}: ${await r.text()}`);
+  },
   async fetch(req) {
     const u = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
