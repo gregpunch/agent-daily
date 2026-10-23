@@ -1,0 +1,13 @@
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+const url = process.env.MCP_URL || "http://127.0.0.1:8787/mcp";
+const c = new Client({ name: "agent-daily-test", version: "1.0.0" });
+await c.connect(new StreamableHTTPClientTransport(new URL(url)));
+console.log("server:", c.getServerVersion().name, "protocol ok");
+const { tools } = await c.listTools(); console.log("tools:", tools.map(t => t.name).join(", "));
+const l = await c.callTool({ name: "list_tools", arguments: { category: "LLM" } });
+console.log("list_tools(LLM):", l.structuredContent.count, l.structuredContent.tools.map(t => `${t.name}=${t.up}`).join(" "));
+const s = await c.callTool({ name: "tool_status", arguments: { name: "github mcp" } });
+console.log("tool_status(github mcp):", s.structuredContent.tool.name, s.structuredContent.tool.http_status, "stale:", s.structuredContent.stale);
+const all = await c.callTool({ name: "list_tools", arguments: {} }); console.log("all:", all.structuredContent.count);
+await c.close(); console.log("PASS");

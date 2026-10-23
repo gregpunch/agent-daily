@@ -45,3 +45,11 @@ Files: `tools.json` (config), `tools.md` (list + method), `check.py`, `build.py`
 | Domain (optional, e.g. agentdaily.dev) | ~$1–1.25/mo ($12–15/yr) |
 | Paid-API functional tests (Phase 2 only) | $0 now; cap $30–50 |
 | **Phase 1 total** | **$0–2/mo** |
+
+## MCP server (`mcp-worker/`)
+This is a stateless, read-only MCP server on a Cloudflare Worker. It uses Streamable HTTP at `/mcp` and offers two tools: `list_tools(category?)` and `tool_status(name)`. Both read `status.json` with a 5-minute cache. It also serves `/.well-known/mcp/server-card.json`.
+```
+cd mcp-worker && npm install && npx wrangler dev   # local
+npm test                                           # MCP SDK client check against localhost:8787
+npx wrangler deploy                                # needs CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID
+```

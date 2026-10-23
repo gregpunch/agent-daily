@@ -1,0 +1,2 @@
+{"name":"agent-daily-mcp","private":true,"type":"module","scripts":{"dev":"wrangler dev","deploy":"wrangler deploy","test":"node test.mjs"},
+ "devDependencies":{"wrangler":"^4","@modelcontextprotocol/sdk":"^1"}}
