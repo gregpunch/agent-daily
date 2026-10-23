@@ -1,0 +1,232 @@
+{
+ "schema_version": "1.0",
+ "generated_at": "2026-10-20T21:38:12+00:00",
+ "update_cadence": "hourly",
+ "methodology": "Unauthenticated reachability probe; up = expected HTTP code. Not a correctness test.",
+ "summary": {
+  "up": 20,
+  "total": 20
+ },
+ "tools": [
+  {
+   "name": "Discord API",
+   "category": "Comms",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 66,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Slack API",
+   "category": "Comms",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 118,
+   "vendor_status": "ok",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Twilio API",
+   "category": "Comms",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 178,
+   "vendor_status": "minor",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "GitHub API",
+   "category": "Dev",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 211,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Cloudflare API",
+   "category": "Infra",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 85,
+   "vendor_status": "major",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Supabase",
+   "category": "Infra",
+   "up": true,
+   "http_status": 401,
+   "latency_ms": 92,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Vercel",
+   "category": "Infra",
+   "up": true,
+   "http_status": 403,
+   "latency_ms": 108,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Wikipedia API",
+   "category": "Knowledge",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 119,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Anthropic API",
+   "category": "LLM",
+   "up": true,
+   "http_status": 401,
+   "latency_ms": 129,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Hugging Face Hub",
+   "category": "LLM",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 103,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "OpenAI API",
+   "category": "LLM",
+   "up": true,
+   "http_status": 401,
+   "latency_ms": 107,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "DeepWiki MCP",
+   "category": "MCP",
+   "up": true,
+   "http_status": 406,
+   "latency_ms": 58,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "GitHub MCP (remote)",
+   "category": "MCP",
+   "up": true,
+   "http_status": 405,
+   "latency_ms": 320,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Linear MCP",
+   "category": "MCP",
+   "up": true,
+   "http_status": 401,
+   "latency_ms": 107,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "OpenStreetMap Nominatim",
+   "category": "Maps",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 35,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Stripe API",
+   "category": "Payments",
+   "up": true,
+   "http_status": 401,
+   "latency_ms": 55,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Google APIs",
+   "category": "Platform",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 394,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Atlassian (Jira/Confluence)",
+   "category": "Productivity",
+   "up": true,
+   "http_status": 200,
+   "latency_ms": 144,
+   "vendor_status": "none",
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Brave Search API",
+   "category": "Search",
+   "up": true,
+   "http_status": 422,
+   "latency_ms": 49,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  },
+  {
+   "name": "Serper",
+   "category": "Search",
+   "up": true,
+   "http_status": 403,
+   "latency_ms": 102,
+   "vendor_status": null,
+   "error": null,
+   "uptime_24h_pct": 100.0,
+   "checks_24h": 5
+  }
+ ]
+}

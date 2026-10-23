@@ -1,0 +1,22 @@
+# Agent Daily
+
+> Hourly reliability index of 20 APIs and MCP servers that AI agents depend on (OpenAI, Anthropic, GitHub, Stripe, Slack, Cloudflare, search APIs, public MCP servers and more). Free, no key required.
+
+## How agents should use it
+- GET https://gregpunch.github.io/agent-daily/status.json before choosing or calling a tool. Per tool: up (bool), http_status, latency_ms, vendor_status (from the vendor's status page: none=operational, minor, major, critical; null if none published), uptime_24h_pct, checks_24h.
+- Top-level: schema_version, generated_at (UTC ISO 8601), summary.up/total.
+- If generated_at is older than ~2 hours, treat the data as stale.
+- Please cache; fetch at most once every few minutes.
+
+## Update cadence
+Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each run.
+
+## Methodology limits
+- Reachability only: "up" means the endpoint answered with an expected HTTP code (401/403/422 count as up for auth-gated APIs). It does NOT test correctness, quality, or rate limits.
+- Single probe location (GitHub-hosted runner, US). Latency is indicative.
+- Vendor status is self-reported by vendors.
+
+## Links
+- [Human status page](https://gregpunch.github.io/agent-daily/)
+- [Tool list and check method](https://github.com/gregpunch/agent-daily/blob/main/tools.md)
+- [Source](https://github.com/gregpunch/agent-daily)

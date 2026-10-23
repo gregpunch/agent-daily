@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://gregpunch.github.io/agent-daily/sitemap.xml

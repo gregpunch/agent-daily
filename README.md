@@ -1,4 +1,25 @@
-# Agent Daily: Tool Reliability Index (prototype)
+# Agent Daily: is this tool up right now?
+
+**A free, hourly reliability index for the APIs and MCP servers AI agents call**: OpenAI, Anthropic, GitHub (API + MCP), Stripe, Slack, Cloudflare, Brave/Serper search, Linear and DeepWiki MCP, and more (20 tools).
+
+Built for agent builders. Check before your agent calls a tool, fall back when a tool is down, and stop burning retries on outages.
+
+- Status page: https://gregpunch.github.io/agent-daily/
+- Machine-readable: https://gregpunch.github.io/agent-daily/status.json
+- Agent guide: https://gregpunch.github.io/agent-daily/llms.txt
+
+## Consume status.json
+```python
+import requests
+s = requests.get("https://gregpunch.github.io/agent-daily/status.json", timeout=5).json()
+tool = next(t for t in s["tools"] if t["name"] == "OpenAI API")
+if not tool["up"] or tool["vendor_status"] in ("major", "critical"):
+    ...  # route to a fallback provider
+```
+Fields: `schema_version`, `generated_at` (UTC), `summary.{up,total}`, and `tools[]` with `name, category, up, http_status, latency_ms, vendor_status, uptime_24h_pct, checks_24h, error`. Data is refreshed hourly; treat it as stale if older than about 2h. Please cache.
+
+**Limits:** these are reachability checks only (an expected HTTP code), not correctness or quality tests. There is a single probe location.
+
 
 A free public status page for 20 tools AI agents depend on. This is Phase 1, a two-week validation.
 
