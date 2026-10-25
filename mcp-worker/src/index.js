@@ -66,6 +66,45 @@ async function rpc(m) {
   }
 }
 
+// ---- anonymous usage logging (no IPs) ----
+import { DurableObject } from "cloudflare:workers";
+const CRAWLERS = /glama|golemreach|pulsemcp|smithery|mcp\.so|mcpmarket|bot|crawl|spider|scan|probe|slurp|headless|python-requests|go-http-client|okhttp|httpx|aiohttp|wget/i;
+function uaFamily(ua) {
+  const m = ua.match(/^([A-Za-z][\w.\-]*)/); return m ? m[1].slice(0, 40) : (ua ? "other" : "none");
+}
+function classify(req, ua, client) {
+  if (req.headers.get("x-agent-daily-test") || /agent-daily/i.test(ua)) return "own";
+  if (CRAWLERS.test(ua) || CRAWLERS.test(client || "")) return "crawler";
+  if (/mozilla/i.test(ua) && !client) return "browser";
+  return "agent";
+}
+export class Stats extends DurableObject {
+  constructor(ctx, env) { super(ctx, env); this.sql = ctx.storage.sql;
+    this.sql.exec("CREATE TABLE IF NOT EXISTS c (day TEXT, kind TEXT, method TEXT, tool TEXT, arg TEXT, client TEXT, ua TEXT, country TEXT, n INTEGER, last TEXT, PRIMARY KEY(day,kind,method,tool,arg,client,ua,country))"); }
+  add(r) { this.sql.exec("INSERT INTO c VALUES (?,?,?,?,?,?,?,?,1,?) ON CONFLICT DO UPDATE SET n=n+1, last=excluded.last",
+      r.ts.slice(0, 10), r.kind, r.method, r.tool, r.arg, r.client, r.ua, r.country, r.ts); }
+  summary(days) { const since = new Date(Date.now() - days * 864e5).toISOString().slice(0, 10);
+    const q = (x) => this.sql.exec(x, since).toArray();
+    return { since, by_day_kind: q("SELECT day,kind,SUM(n) n FROM c WHERE day>=? GROUP BY 1,2 ORDER BY 1,2"),
+      rows: q("SELECT * FROM c WHERE day>=? ORDER BY day DESC, n DESC LIMIT 500") }; }
+}
+function record(env, ctx, req, msgs) {
+  try {
+    const ua = req.headers.get("user-agent") || "", country = req.cf?.country || "??", ts = new Date().toISOString();
+    const stub = env.STATS.get(env.STATS.idFromName("global"));
+    for (const m of msgs) {
+      if (!m || typeof m !== "object") continue;
+      const p = m.params || {}, method = String(m.method || "none").slice(0, 40);
+      const client = method === "initialize" ? `${p.clientInfo?.name || "?"}/${p.clientInfo?.version || "?"}`.slice(0, 60) : "";
+      const tool = method === "tools/call" ? String(p.name || "").slice(0, 40) : "";
+      const a = p.arguments || {}, arg = tool ? String(a.category || a.name || "").slice(0, 40) : "";
+      const r = { ts, kind: classify(req, ua, client), method, tool, arg, client, ua: uaFamily(ua), country };
+      console.log(JSON.stringify({ usage: r }));
+      ctx.waitUntil(stub.add(r).catch(() => {}));
+    }
+  } catch {}
+}
+
 export default {
   async scheduled(event, env, ctx) {
     const r = await fetch("https://api.github.com/repos/gregpunch/agent-daily/actions/workflows/check.yml/dispatches", {
@@ -73,8 +112,13 @@ export default {
       body: JSON.stringify({ ref: "main" }) });
     if (r.status !== 204) throw new Error(`dispatch failed HTTP ${r.status}: ${await r.text()}`);
   },
-  async fetch(req) {
+  async fetch(req, env, ctx) {
     const u = new URL(req.url);
+    if (u.pathname === "/stats") {
+      if (!env.STATS_KEY || req.headers.get("authorization") !== `Bearer ${env.STATS_KEY}`) return json({ error: "unauthorized" }, 401);
+      const stub = env.STATS.get(env.STATS.idFromName("global"));
+      return json(await stub.summary(Number(u.searchParams.get("days")) || 7));
+    }
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (u.pathname === "/.well-known/mcp/server-card.json") return json(CARD);
     if (u.pathname === "/" ) return json({ ...INFO, mcp: u.origin + "/mcp", data: STATUS_URL });
@@ -84,6 +128,7 @@ export default {
     if (req.method !== "POST") return new Response(null, { status: 405, headers: CORS });
     let body; try { body = await req.json(); } catch { return json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, 400); }
     const batch = Array.isArray(body);
+    record(env, ctx, req, batch ? body : [body]);
     const out = (await Promise.all((batch ? body : [body]).map(rpc))).filter(Boolean);
     if (!out.length) return new Response(null, { status: 202, headers: CORS });
     return json(batch ? out : out[0]);

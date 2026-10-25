@@ -5,3 +5,14 @@ workers_dev = true
 
 [triggers]
 crons = ["7 * * * *"]
+
+[observability]
+enabled = true
+
+[[durable_objects.bindings]]
+name = "STATS"
+class_name = "Stats"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Stats"]
