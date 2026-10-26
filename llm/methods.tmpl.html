@@ -14,6 +14,7 @@
 <h2>Limits</h2><ul><li>One trivial prompt. This measures availability, instruction following on a one-word task and latency, not intelligence or quality.</li>
 <li>Routing through OpenRouter adds a small hop, and OpenRouter may pick different upstream hosts; direct checks act as a control.</li>
 <li>Single location (US). Your latency will differ.</li><li>Spend is capped at ${{CAP}}/month; if reached, probing pauses until the 30-day total drops.</li></ul>
+<h2>Excluded runs</h2><p>Runs we dropped from the stats because our own probe was misconfigured (not the models' fault):</p><ul>{{EXCLUDED}}</ul>
 <h2>Data</h2><ul><li><a href="leaderboard.json">leaderboard.json</a>: current ranking (free, no key; please cache).</li><li>Per model: <code>models/&lt;id&gt;.json</code> (24h/7d buckets, last 50 probes, error counts).</li>
 <li>Agents: the <a href="https://agent-daily.agentdaily.workers.dev/mcp">Agent Daily MCP server</a> (Streamable HTTP, no auth) has an <code>llm_leaderboard(sort?)</code> tool. See <a href="../llms.txt">llms.txt</a>.</li>
 <li>Source: <a href="https://github.com/gregpunch/agent-daily">github.com/gregpunch/agent-daily</a></li></ul>

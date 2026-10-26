@@ -10,6 +10,7 @@ if (D/"llm.db").exists():
     db = sqlite3.connect(D/"llm.db"); db.row_factory = sqlite3.Row
     try: rows = [dict(r) for r in db.execute("SELECT * FROM probes WHERE ts>=? ORDER BY ts", (iso(now-datetime.timedelta(days=7)),))]
     except sqlite3.OperationalError: rows = []
+    rows = [r for r in rows if r["ts"] not in CFG.get("excluded_runs", {})]
 def fid(m): return m.replace("/", "__")
 def med(xs): xs = [x for x in xs if x is not None]; return int(statistics.median(xs)) if xs else None
 ERR = ["rate_limit", "content_filter", "timeout", "wrong_answer", "server_error", "client_error", "network"]
@@ -69,5 +70,5 @@ for f in ("index.html", "model.html", "style.css"): shutil.copy(D/"llm"/f, OUT/f
 models_list = "".join(f"<li><code>{html.escape(m)}</code></li>" for m in CFG["openrouter"])
 direct_list = "".join(f"<li>{d['provider']}: <code>{d['model']}</code> (runs only if {d['key']} is configured)</li>" for d in CFG["direct"])
 (OUT/"methods.html").write_text((D/"llm/methods.tmpl.html").read_text().replace("{{MODELS}}", models_list).replace("{{DIRECT}}", direct_list)
-    .replace("{{MAXT}}", str(CFG["max_tokens"])).replace("{{OVERRIDES}}", ", ".join(f"<code>{html.escape(k)}</code> ({html.escape(json.dumps(v['reasoning']))})" for k,v in CFG.get("overrides",{}).items()) or "none").replace("{{CAP}}", str(CFG["monthly_cap_usd"])))
+    .replace("{{MAXT}}", str(CFG["max_tokens"])).replace("{{OVERRIDES}}", ", ".join(f"<code>{html.escape(k)}</code> ({html.escape(json.dumps(v['reasoning']))})" for k,v in CFG.get("overrides",{}).items()) or "none").replace("{{EXCLUDED}}", "".join(f"<li>{html.escape(k)} UTC: {html.escape(v)}</li>" for k,v in CFG.get("excluded_runs",{}).items()) or "<li>None</li>").replace("{{CAP}}", str(CFG["monthly_cap_usd"])))
 print(f"llm: {len(stats)} models ranked, {len(rows)} probes in 7d, status={LB['status']}")

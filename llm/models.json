@@ -62,5 +62,9 @@
    }
   }
  },
- "overrides_note": "Default sends no reasoning setting (provider default). Overrides only where the default thinks past the token limit or bills heavily for a one-word reply; they are listed on the methods page."
+ "overrides_note": "Default sends no reasoning setting (provider default). Overrides only where the default thinks past the token limit or bills heavily for a one-word reply; they are listed on the methods page.",
+ "excluded_runs": {
+  "2026-10-26T13:29:27+00:00": "probe misconfigured (forced reasoning effort, 16-token limit)",
+  "2026-10-26T13:30:51+00:00": "probe misconfigured (forced reasoning effort, 16-token limit)"
+ }
 }
