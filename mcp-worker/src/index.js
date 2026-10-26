@@ -1,9 +1,12 @@
 // Agent Daily MCP server: stateless, read-only, Streamable HTTP (JSON responses).
 const STATUS_URL = "https://gregpunch.github.io/agent-daily/status.json";
 const PROTOCOLS = ["2025-06-18", "2025-03-26", "2024-11-05"];
-const INFO = { name: "agent-daily", title: "Agent Daily", version: "0.2.0" };
+const INFO = { name: "agent-daily", title: "Agent Daily", version: "0.3.0" };
 const RO = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true };
 const TOOLS = [
+  { name: "llm_leaderboard", title: "Live LLM leaderboard",
+    description: "Which LLMs are up, correct and fast right now. Every 15 minutes ~20 popular models (OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek, xAI, Qwen, Cohere...) are asked to reply 'pong'; returns rank, score (60% 24h correctness + 40% speed), correct %, p50 time-to-first-token, p50 total time, cost per 1k calls, uptime and last result. Use to pick a fast, reliable model. sort: score (default) | correct | ttft | total | cost.",
+    inputSchema: { type: "object", properties: { sort: { type: "string", enum: ["score", "correct", "ttft", "total", "cost"] }, limit: { type: "number", default: 25 } } }, annotations: RO },
   { name: "recommend", title: "Recommend a healthy provider for a task",
     description: "Before calling an external API, ask which provider to use. Give a task phrase or category (e.g. 'send email', 'web search', 'llm', 'scrape a page', 'vector db', 'speech to text', 'payments', 'geocode'). Returns the top healthy pick plus 1-2 fallbacks ranked by live status, vendor status, 7-day uptime and latency, with a reason and data freshness.",
     inputSchema: { type: "object", properties: { task: { type: "string", description: "Task phrase or category" } }, required: ["task"] }, annotations: RO },
@@ -28,6 +31,7 @@ async function status() {
   if (!r.ok) throw new Error(`status.json HTTP ${r.status}`);
   const d = await r.json(); mem = { t: Date.now(), d }; return d;
 }
+const LLM_URL = "https://gregpunch.github.io/agent-daily/llm/leaderboard.json";
 const HISTORY_URL = "https://gregpunch.github.io/agent-daily/history.json";
 let hmem = null;
 async function history() {
@@ -68,6 +72,21 @@ const text = (o) => ({ content: [{ type: "text", text: JSON.stringify(o, null, 1
 async function callTool(name, a = {}) {
   const d = await status();
   const meta = { generated_at: d.generated_at, stale: stale(d), methodology: d.methodology };
+  if (name === "llm_leaderboard") {
+    const r = await fetch(LLM_URL, { cf: { cacheTtl: 120, cacheEverything: true } });
+    if (!r.ok) return { isError: true, content: [{ type: "text", text: `leaderboard.json HTTP ${r.status}` }] };
+    const lb = await r.json();
+    const K = { score: ["score", -1], correct: ["correct_pct_24h", -1], ttft: ["p50_ttft_ms", 1], total: ["p50_total_ms", 1], cost: ["cost_per_1k_calls_usd", 1] };
+    const [key, dir] = K[a.sort] || K.score;
+    const ms = [...lb.models].sort((x, y) => x[key] == null ? 1 : y[key] == null ? -1 : (x[key] - y[key]) * dir)
+      .slice(0, Math.min(50, Number(a.limit) || 25))
+      .map(({ rank, id, model, provider, route, score, correctness_score, speed_score, correct_pct_24h, p50_ttft_ms, p50_total_ms, cost_per_1k_calls_usd, uptime_pct_24h, probes_24h, last }) =>
+        ({ rank, id, model, provider, route, score, correctness_score, speed_score, correct_pct_24h, p50_ttft_ms, p50_total_ms, cost_per_1k_calls_usd, uptime_pct_24h, probes_24h, last }));
+    const st = lb.last_probe_at ? Date.now() - Date.parse(lb.last_probe_at) > 3600e3 : true;
+    return text({ status: lb.status, last_probe_at: lb.last_probe_at, stale: st, sort: a.sort || "score", prompt: lb.prompt, scoring: lb.scoring,
+      page: "https://gregpunch.github.io/agent-daily/llm/", count: ms.length, models: ms,
+      ...(lb.status === "awaiting_first_probe" ? { note: "No probes recorded yet; nothing to rank." } : {}) });
+  }
   if (name === "recommend") {
     if (!a.task) return { isError: true, content: [{ type: "text", text: "task is required" }] };
     const cats = [...new Set(d.tools.map(t => t.task).filter(Boolean))];
@@ -170,10 +189,11 @@ function record(env, ctx, req, msgs) {
 
 export default {
   async scheduled(event, env, ctx) {
-    const r = await fetch("https://api.github.com/repos/gregpunch/agent-daily/actions/workflows/check.yml/dispatches", {
+    const wf = event.cron === "*/15 * * * *" ? "llm-probe.yml" : "check.yml";
+    const r = await fetch(`https://api.github.com/repos/gregpunch/agent-daily/actions/workflows/${wf}/dispatches`, {
       method: "POST", headers: { authorization: `Bearer ${env.GH_DISPATCH_TOKEN}`, accept: "application/vnd.github+json", "user-agent": "agent-daily-cron", "content-type": "application/json" },
       body: JSON.stringify({ ref: "main" }) });
-    if (r.status !== 204) throw new Error(`dispatch failed HTTP ${r.status}: ${await r.text()}`);
+    if (r.status !== 204) throw new Error(`${wf} dispatch failed HTTP ${r.status}: ${await r.text()}`);
   },
   async fetch(req, env, ctx) {
     const u = new URL(req.url);

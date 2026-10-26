@@ -14,6 +14,11 @@
 - Remote MCP (Streamable HTTP, no auth, read-only): https://agent-daily.agentdaily.workers.dev/mcp
 - Tools: recommend(task) picks the healthiest provider for a task ('send email', 'web search', 'llm', 'scrape a page') plus fallbacks; incidents(name?, days?); list_tools(category?); tool_status(name). Backed by status.json/history.json with a 5-minute cache.
 
+## LLM Live Probe
+- https://gregpunch.github.io/agent-daily/llm/leaderboard.json: every 15 minutes ~20 popular models (via OpenRouter) get the prompt "Reply with exactly the word pong". Per model: score (0.6 correctness + 0.4 speed), correct_pct_24h, p50_ttft_ms, p50_total_ms, cost_per_1k_calls_usd, uptime_pct_24h, last result. status="awaiting_first_probe" means no data yet.
+- Per model detail: https://gregpunch.github.io/agent-daily/llm/models/<id>.json (id = model slug with "/" replaced by "__"). Methods: https://gregpunch.github.io/agent-daily/llm/methods.html
+- MCP tool: llm_leaderboard(sort?) with sort = score | correct | ttft | total | cost.
+
 ## Update cadence
 Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each run.
 

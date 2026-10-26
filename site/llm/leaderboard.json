@@ -1,0 +1,11 @@
+{
+ "schema_version": "1.0",
+ "generated_at": "2026-10-26T12:14:52+00:00",
+ "last_probe_at": null,
+ "status": "awaiting_first_probe",
+ "prompt": "Reply with exactly the word pong",
+ "expected": "pong",
+ "cadence": "every 15 minutes",
+ "scoring": "score = 0.6*correct_pct_24h + 0.4*speed_score; speed_score = mean percentile rank (100 = fastest) of p50 TTFT and p50 total time among ranked models",
+ "models": []
+}

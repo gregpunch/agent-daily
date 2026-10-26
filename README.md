@@ -67,3 +67,6 @@ Remote endpoint: `https://agent-daily.agentdaily.workers.dev/mcp` (Streamable HT
 - `tool_status(name)`: full record, including 7-day uptime and p50/p95.
 
 Data: `status.json` (current + 7d stats) and `history.json` (incidents), both regenerated hourly.
+
+## LLM Live Probe (v0.3.0)
+https://gregpunch.github.io/agent-daily/llm/: every 15 minutes ~20 popular models (via OpenRouter, plus optional direct OpenAI/Anthropic/Gemini control checks) get "Reply with exactly the word pong". Leaderboard (score = 60% 24h correctness + 40% speed), per-model detail pages and a methods page. Data: `llm/leaderboard.json`, `llm/models/<id>.json`. MCP tool: `llm_leaderboard(sort?)`. Probing skips cleanly when no keys are set; spend is capped at $2.50/30 days in `llm/models.json`.

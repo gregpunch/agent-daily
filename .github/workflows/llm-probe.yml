@@ -1,0 +1,45 @@
+name: llm-probe
+on:
+  schedule: [{cron: "*/15 * * * *"}]
+  workflow_dispatch:
+permissions: {contents: read, pages: write, id-token: write}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    concurrency: {group: llm-probe, cancel-in-progress: false}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install requests
+      - name: Restore LLM history
+        uses: actions/cache/restore@v4
+        with: {path: llm.db, key: "llm-${{ github.run_id }}", restore-keys: "llm-"}
+      - name: Restore status history (read-only)
+        uses: actions/cache/restore@v4
+        with: {path: results.db, key: "results-none-${{ github.run_id }}", restore-keys: "results-"}
+      - name: Probe (skips gracefully if no keys)
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python llm_probe.py
+      - name: Save LLM history
+        if: hashFiles('llm.db') != ''
+        uses: actions/cache/save@v4
+        with: {path: llm.db, key: "llm-${{ github.run_id }}"}
+      - name: Build site
+        run: |
+          if [ -f results.db ]; then python build.py; fi
+          python llm_build.py
+      - uses: actions/upload-pages-artifact@v3
+        with: {path: site}
+  deploy:
+    needs: probe
+    runs-on: ubuntu-latest
+    concurrency: {group: pages, cancel-in-progress: false}
+    environment: {name: github-pages, url: "${{ steps.deploy.outputs.page_url }}"}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

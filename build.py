@@ -58,6 +58,7 @@ th,td{{padding:10px 12px;text-align:left;border-bottom:1px solid #1f2937;font-si
 .pill{{padding:2px 8px;border-radius:999px;font-size:12px}}.pill.ok{{background:#14532d}}.pill.warn{{background:#713f12}}.pill.bad{{background:#7f1d1d}}.pill.na{{background:#374151}}
 footer{{color:#6b7280;font-size:12px;margin-top:16px}}</style></head><body><div class=wrap>
 <h1>Agent Daily</h1><div class=sub>Live reliability index for the tools and APIs AI agents depend on.</div>
+<p><a style="color:#93c5fd" href="llm/"><b>New: LLM Live Probe</b></a>: which AI models are up, correct and fast right now (probed every 15 minutes).</p>
 <div class=banner><b>{upn}/{len(rows)}</b> tools reachable · last check {last} UTC</div>
 <table><tr><th>Tool</th><th>Category</th><th>Probe</th><th>Latency</th><th>HTTP</th><th>Vendor status</th><th>24h uptime</th><th>7d uptime</th><th>p50/p95</th></tr>{tr}</table>{inc_html}
 <footer>Probes are unauthenticated reachability checks; "Up" means the endpoint answered with an expected code (401 counts as up for auth-gated APIs). Vendor status comes from public status-page JSON. Methodology: see tools.md. Agents: use <a style="color:#93c5fd" href="status.json">status.json</a> · <a style="color:#93c5fd" href="llms.txt">llms.txt</a>.</footer>
@@ -86,6 +87,11 @@ json.dump({"schema_version":"1.0","generated_at":last,"window_days":7,"providers
 - Remote MCP (Streamable HTTP, no auth, read-only): https://agent-daily.agentdaily.workers.dev/mcp
 - Tools: recommend(task) picks the healthiest provider for a task ('send email', 'web search', 'llm', 'scrape a page') plus fallbacks; incidents(name?, days?); list_tools(category?); tool_status(name). Backed by status.json/history.json with a 5-minute cache.
 
+## LLM Live Probe
+- {BASE}llm/leaderboard.json: every 15 minutes ~20 popular models (via OpenRouter) get the prompt "Reply with exactly the word pong". Per model: score (0.6 correctness + 0.4 speed), correct_pct_24h, p50_ttft_ms, p50_total_ms, cost_per_1k_calls_usd, uptime_pct_24h, last result. status="awaiting_first_probe" means no data yet.
+- Per model detail: {BASE}llm/models/<id>.json (id = model slug with "/" replaced by "__"). Methods: {BASE}llm/methods.html
+- MCP tool: llm_leaderboard(sort?) with sort = score | correct | ttft | total | cost.
+
 ## Update cadence
 Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each run.
 
@@ -100,5 +106,5 @@ Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each 
 - [Source](https://github.com/gregpunch/agent-daily)
 """)
 (D/"site/robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}sitemap.xml\n")
-(D/"site/sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{BASE}{p}</loc><lastmod>{last[:10]}</lastmod><changefreq>hourly</changefreq></url>" for p in ["","status.json","history.json","llms.txt"])+"</urlset>\n")
+(D/"site/sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{BASE}{p}</loc><lastmod>{last[:10]}</lastmod><changefreq>hourly</changefreq></url>" for p in ["","status.json","history.json","llms.txt","llm/","llm/methods.html","llm/leaderboard.json"])+"</urlset>\n")
 print("wrote status.json llms.txt robots.txt sitemap.xml")

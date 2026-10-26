@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Model detail — LLM Live Probe</title>
+<link rel=stylesheet href=style.css></head><body><div class=wrap><nav><a href="./">← Leaderboard</a><a href="methods.html">How it works</a></nav>
+<h1 id=h>Loading…</h1><div class=sub id=sub></div><div class=cards id=cards></div>
+<h2>Last 24 hours</h2><div id=c24></div><h2>Last 7 days</h2><div id=c7></div>
+<h2>Errors</h2><table id=err></table><h2>Last 50 probes</h2><div style="overflow-x:auto"><table id=last></table></div>
+<script>
+const id=new URLSearchParams(location.search).get("id");const f=(v,s="")=>v==null?"—":v+s;const esc=s=>(s??"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function chart(el,b,lab){const W=1000,H=160,n=b.length,bw=W/n;const mx=Math.max(1,...b.map(x=>x.p50_total_ms||0));
+ let s=`<svg viewBox="0 0 ${W} ${H+40}" width="100%">`;b.forEach((x,i)=>{const X=i*bw;
+  if(x.correct_pct!=null){const h=x.correct_pct/100*(H/2-10);s+=`<rect x="${X+2}" y="${H/2-h}" width="${bw-4}" height="${h}" fill="${x.correct_pct>=90?"#22c55e":x.correct_pct>=50?"#eab308":"#ef4444"}"><title>${x.t}: ${x.correct_pct}% correct (${x.n})</title></rect>`;}
+  if(x.p50_total_ms!=null){const h=x.p50_total_ms/mx*(H/2-10);s+=`<rect x="${X+2}" y="${H-h}" width="${bw-4}" height="${h}" fill="#3b82f6"><title>${x.t}: p50 total ${x.p50_total_ms} ms, TTFT ${x.p50_ttft_ms} ms</title></rect>`;}
+ });s+=`<text x="4" y="12" fill="#8b93a7" font-size="12">% correct</text><text x="4" y="${H/2+14}" fill="#8b93a7" font-size="12">median total time (max ${mx} ms)</text>`;
+ s+=`<text x="4" y="${H+28}" fill="#8b93a7" font-size="12">${lab}</text></svg>`;document.getElementById(el).innerHTML=s;}
+fetch(`models/${encodeURIComponent(id)}.json`,{cache:"no-store"}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(m=>{
+ document.title=m.model+" — LLM Live Probe";document.getElementById("h").textContent=m.model;
+ document.getElementById("sub").innerHTML=`${m.provider} · via ${m.route} · rank #${m.rank} · updated ${new Date(m.generated_at).toLocaleString()}`;
+ document.getElementById("cards").innerHTML=[["Score",m.score],["Correct 24h",f(m.correct_pct_24h,"%")],["Speed score",m.speed_score],["First token (p50)",f(m.p50_ttft_ms," ms")],["Total (p50)",f(m.p50_total_ms," ms")],["Cost / 1k calls",m.cost_per_1k_calls_usd==null?"—":"$"+m.cost_per_1k_calls_usd],["Uptime 24h",f(m.uptime_pct_24h,"%")]].map(([a,b])=>`<div class=card><small>${a}</small><b>${b}</b></div>`).join("");
+ chart("c24",m.chart_24h,"hourly, oldest → newest");chart("c7",m.chart_7d,"6-hour buckets, oldest → newest");
+ const E={rate_limit:"Rate limited",content_filter:"Content filter",timeout:"Timeout",wrong_answer:"Wrong answer",server_error:"Server error",client_error:"Other request error",network:"Network"};
+ document.getElementById("err").innerHTML="<tr><th>Error</th><th>24h</th><th>7d</th></tr>"+Object.keys(E).map(e=>`<tr><td>${E[e]}</td><td>${m.errors_24h[e]}</td><td>${m.errors_7d[e]}</td></tr>`).join("");
+ document.getElementById("last").innerHTML="<tr><th>Time</th><th>Result</th><th>Reply</th><th>Tokens in/out</th><th>Cost</th><th>First token</th><th>Total</th><th>HTTP</th><th>Error</th></tr>"+
+  m.last_50.map(p=>`<tr><td><small>${new Date(p.ts).toLocaleString()}</small></td><td><span class="dot ${p.ok?"ok":"bad"}"></span> ${p.ok?"pass":"fail"}</td><td><code>${esc(p.reply)}</code></td><td>${f(p.tok_in)}/${f(p.tok_out)}</td><td>${p.cost==null?"—":"$"+p.cost.toFixed(7)}</td><td>${f(p.ttft_ms," ms")}</td><td>${f(p.total_ms," ms")}</td><td>${f(p.http)}</td><td><small>${esc(p.error_type||"")} ${esc(p.detail||"")}</small></td></tr>`).join("");
+}).catch(()=>{document.getElementById("h").textContent="No data for this model yet";document.getElementById("sub").innerHTML='It may be awaiting its first probe. <a href="./">Back to the leaderboard</a>.';});
+</script></div></body></html>
