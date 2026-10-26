@@ -7,7 +7,9 @@
    200,
    401
   ],
-  "status": "https://status.openai.com/api/v2/status.json"
+  "status": "https://status.openai.com/api/v2/status.json",
+  "task": "llm",
+  "kind": "api"
  },
  {
   "name": "Anthropic API",
@@ -18,7 +20,9 @@
    401,
    404
   ],
-  "status": "https://status.anthropic.com/api/v2/status.json"
+  "status": "https://status.anthropic.com/api/v2/status.json",
+  "task": "llm",
+  "kind": "api"
  },
  {
   "name": "Hugging Face Hub",
@@ -27,7 +31,9 @@
   "ok": [
    200
   ],
-  "status": null
+  "status": null,
+  "task": "ml-models",
+  "kind": "api"
  },
  {
   "name": "GitHub API",
@@ -38,7 +44,9 @@
   ],
   "status": "https://www.githubstatus.com/api/v2/status.json",
   "auth": "github",
-  "expect_login": "gregpunch"
+  "expect_login": "gregpunch",
+  "task": "code",
+  "kind": "api"
  },
  {
   "name": "GitHub MCP (remote)",
@@ -49,7 +57,9 @@
    405
   ],
   "status": null,
-  "auth": "github"
+  "auth": "github",
+  "task": "code",
+  "kind": "mcp"
  },
  {
   "name": "Linear MCP",
@@ -61,7 +71,9 @@
    405,
    406
   ],
-  "status": "https://linearstatus.com/api/v2/status.json"
+  "status": "https://linearstatus.com/api/v2/status.json",
+  "task": "productivity",
+  "kind": "mcp"
  },
  {
   "name": "DeepWiki MCP",
@@ -73,7 +85,9 @@
    405,
    406
   ],
-  "status": null
+  "status": null,
+  "task": "docs",
+  "kind": "mcp"
  },
  {
   "name": "Stripe API",
@@ -82,7 +96,9 @@
   "ok": [
    401
   ],
-  "status": null
+  "status": null,
+  "task": "payments",
+  "kind": "api"
  },
  {
   "name": "Slack API",
@@ -92,7 +108,9 @@
    200
   ],
   "status": null,
-  "slack": "https://slack-status.com/api/v2.0.0/current"
+  "slack": "https://slack-status.com/api/v2.0.0/current",
+  "task": "messaging",
+  "kind": "api"
  },
  {
   "name": "Discord API",
@@ -101,7 +119,9 @@
   "ok": [
    200
   ],
-  "status": "https://discordstatus.com/api/v2/status.json"
+  "status": "https://discordstatus.com/api/v2/status.json",
+  "task": "messaging",
+  "kind": "api"
  },
  {
   "name": "Twilio API",
@@ -111,7 +131,9 @@
    200,
    401
   ],
-  "status": "https://status.twilio.com/api/v2/status.json"
+  "status": "https://status.twilio.com/api/v2/status.json",
+  "task": "sms",
+  "kind": "api"
  },
  {
   "name": "Google APIs",
@@ -120,7 +142,9 @@
   "ok": [
    200
   ],
-  "status": null
+  "status": null,
+  "task": "platform",
+  "kind": "api"
  },
  {
   "name": "Cloudflare API",
@@ -129,7 +153,9 @@
   "ok": [
    200
   ],
-  "status": "https://www.cloudflarestatus.com/api/v2/status.json"
+  "status": "https://www.cloudflarestatus.com/api/v2/status.json",
+  "task": "infra",
+  "kind": "api"
  },
  {
   "name": "Vercel",
@@ -139,7 +165,9 @@
    401,
    403
   ],
-  "status": "https://www.vercel-status.com/api/v2/status.json"
+  "status": "https://www.vercel-status.com/api/v2/status.json",
+  "task": "infra",
+  "kind": "api"
  },
  {
   "name": "Supabase",
@@ -148,7 +176,9 @@
   "ok": [
    401
   ],
-  "status": "https://status.supabase.com/api/v2/status.json"
+  "status": "https://status.supabase.com/api/v2/status.json",
+  "task": "storage/db",
+  "kind": "api"
  },
  {
   "name": "Brave Search API",
@@ -159,7 +189,9 @@
    422,
    429
   ],
-  "status": null
+  "status": null,
+  "task": "search",
+  "kind": "api"
  },
  {
   "name": "Serper",
@@ -171,7 +203,9 @@
    403,
    405
   ],
-  "status": null
+  "status": null,
+  "task": "search",
+  "kind": "api"
  },
  {
   "name": "Wikipedia API",
@@ -180,7 +214,9 @@
   "ok": [
    200
   ],
-  "status": null
+  "status": null,
+  "task": "knowledge",
+  "kind": "api"
  },
  {
   "name": "OpenStreetMap Nominatim",
@@ -189,7 +225,9 @@
   "ok": [
    200
   ],
-  "status": null
+  "status": null,
+  "task": "maps",
+  "kind": "api"
  },
  {
   "name": "Atlassian (Jira/Confluence)",
@@ -200,6 +238,567 @@
    401,
    404
   ],
+  "status": "https://status.atlassian.com/api/v2/status.json",
+  "task": "productivity",
+  "kind": "api"
+ },
+ {
+  "name": "Resend",
+  "cat": "email",
+  "task": "email",
+  "kind": "api",
+  "probe": "https://api.resend.com/emails",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://resend-status.com/api/v2/status.json"
+ },
+ {
+  "name": "SendGrid",
+  "cat": "email",
+  "task": "email",
+  "kind": "api",
+  "probe": "https://api.sendgrid.com/v3/scopes",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.sendgrid.com/api/v2/status.json"
+ },
+ {
+  "name": "Postmark",
+  "cat": "email",
+  "task": "email",
+  "kind": "api",
+  "probe": "https://api.postmarkapp.com/server",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Mailgun",
+  "cat": "email",
+  "task": "email",
+  "kind": "api",
+  "probe": "https://api.mailgun.net/v3/domains",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.mailgun.com/api/v2/status.json"
+ },
+ {
+  "name": "Tavily",
+  "cat": "search",
+  "task": "search",
+  "kind": "api",
+  "probe": "https://api.tavily.com/search",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.tavily.com/api/v2/status.json"
+ },
+ {
+  "name": "Perplexity API",
+  "cat": "search",
+  "task": "search",
+  "kind": "api",
+  "probe": "https://api.perplexity.ai/chat/completions",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.perplexity.com/api/v2/status.json"
+ },
+ {
+  "name": "Firecrawl",
+  "cat": "scraping",
+  "task": "scraping",
+  "kind": "api",
+  "probe": "https://api.firecrawl.dev/v1/scrape",
+  "ok": [
+   200,
+   401,
+   405
+  ],
+  "status": null
+ },
+ {
+  "name": "Jina Reader",
+  "cat": "scraping",
+  "task": "scraping",
+  "kind": "api",
+  "probe": "https://r.jina.ai/",
+  "ok": [
+   200
+  ],
+  "status": "https://status.jina.ai/api/v2/status.json"
+ },
+ {
+  "name": "Browserbase",
+  "cat": "browser",
+  "task": "browser",
+  "kind": "api",
+  "probe": "https://api.browserbase.com/v1/sessions",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.browserbase.com/api/v2/status.json"
+ },
+ {
+  "name": "Pinecone",
+  "cat": "vector-db",
+  "task": "vector-db",
+  "kind": "api",
+  "probe": "https://api.pinecone.io/indexes",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.pinecone.io/api/v2/status.json"
+ },
+ {
+  "name": "Notion API",
+  "cat": "productivity",
+  "task": "productivity",
+  "kind": "api",
+  "probe": "https://api.notion.com/v1/users",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Airtable API",
+  "cat": "storage/db",
+  "task": "storage/db",
+  "kind": "api",
+  "probe": "https://api.airtable.com/v0/meta/whoami",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.airtable.com/api/v2/status.json"
+ },
+ {
+  "name": "Mistral API",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.mistral.ai/v1/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Groq API",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.groq.com/openai/v1/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://groqstatus.com/api/v2/status.json"
+ },
+ {
+  "name": "Together AI",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.together.xyz/v1/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Replicate",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.replicate.com/v1/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Cohere API",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.cohere.com/v1/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.cohere.com/api/v2/status.json"
+ },
+ {
+  "name": "Google Gemini API",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://generativelanguage.googleapis.com/v1beta/models",
+  "ok": [
+   200,
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "OpenRouter",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://openrouter.ai/api/v1/models",
+  "ok": [
+   200
+  ],
+  "status": null
+ },
+ {
+  "name": "DeepSeek API",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.deepseek.com/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "xAI API",
+  "cat": "llm",
+  "task": "llm",
+  "kind": "api",
+  "probe": "https://api.x.ai/v1/models",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "ElevenLabs",
+  "cat": "voice",
+  "task": "voice",
+  "kind": "api",
+  "probe": "https://api.elevenlabs.io/v1/voices",
+  "ok": [
+   200,
+   401
+  ],
+  "status": "https://status.elevenlabs.io/api/v2/status.json"
+ },
+ {
+  "name": "Deepgram",
+  "cat": "voice",
+  "task": "voice",
+  "kind": "api",
+  "probe": "https://api.deepgram.com/v1/projects",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.deepgram.com/api/v2/status.json"
+ },
+ {
+  "name": "AssemblyAI",
+  "cat": "voice",
+  "task": "voice",
+  "kind": "api",
+  "probe": "https://api.assemblyai.com/v2/transcript",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.assemblyai.com/api/v2/status.json"
+ },
+ {
+  "name": "E2B",
+  "cat": "code-exec",
+  "task": "code-exec",
+  "kind": "api",
+  "probe": "https://api.e2b.dev/sandboxes",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.e2b.dev/api/v2/status.json"
+ },
+ {
+  "name": "Neon",
+  "cat": "storage/db",
+  "task": "storage/db",
+  "kind": "api",
+  "probe": "https://console.neon.tech/api/v2/projects",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Upstash",
+  "cat": "storage/db",
+  "task": "storage/db",
+  "kind": "api",
+  "probe": "https://api.upstash.com/v2/redis/databases",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.upstash.com/api/v2/status.json"
+ },
+ {
+  "name": "Mapbox",
+  "cat": "maps",
+  "task": "maps",
+  "kind": "api",
+  "probe": "https://api.mapbox.com/geocoding/v5/mapbox.places/paris.json",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.mapbox.com/api/v2/status.json"
+ },
+ {
+  "name": "OpenWeather",
+  "cat": "weather",
+  "task": "weather",
+  "kind": "api",
+  "probe": "https://api.openweathermap.org/data/2.5/weather?q=London",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Open-Meteo",
+  "cat": "weather",
+  "task": "weather",
+  "kind": "api",
+  "probe": "https://api.open-meteo.com/v1/forecast?latitude=52.5&longitude=13.4&current=temperature_2m",
+  "ok": [
+   200
+  ],
+  "status": null
+ },
+ {
+  "name": "HubSpot API",
+  "cat": "crm",
+  "task": "crm",
+  "kind": "api",
+  "probe": "https://api.hubapi.com/crm/v3/objects/contacts",
+  "ok": [
+   401,
+   403
+  ],
+  "status": "https://status.hubspot.com/api/v2/status.json"
+ },
+ {
+  "name": "Zapier MCP",
+  "cat": "automation",
+  "task": "automation",
+  "kind": "mcp",
+  "probe": "https://mcp.zapier.com/api/mcp/mcp",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": "https://status.zapier.com/api/v2/status.json"
+ },
+ {
+  "name": "Composio",
+  "cat": "automation",
+  "task": "automation",
+  "kind": "api",
+  "probe": "https://backend.composio.dev/api/v3/toolkits",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Telegram Bot API",
+  "cat": "messaging",
+  "task": "messaging",
+  "kind": "api",
+  "probe": "https://api.telegram.org/bot0/getMe",
+  "ok": [
+   401,
+   404
+  ],
+  "status": null
+ },
+ {
+  "name": "PayPal API",
+  "cat": "payments",
+  "task": "payments",
+  "kind": "api",
+  "probe": "https://api-m.paypal.com/v1/oauth2/token",
+  "ok": [
+   401,
+   403
+  ],
+  "status": null
+ },
+ {
+  "name": "Sentry MCP",
+  "cat": "monitoring",
+  "task": "monitoring",
+  "kind": "mcp",
+  "probe": "https://mcp.sentry.dev/mcp",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": "https://status.sentry.io/api/v2/status.json"
+ },
+ {
+  "name": "Notion MCP",
+  "cat": "productivity",
+  "task": "productivity",
+  "kind": "mcp",
+  "probe": "https://mcp.notion.com/mcp",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": null
+ },
+ {
+  "name": "Atlassian MCP",
+  "cat": "productivity",
+  "task": "productivity",
+  "kind": "mcp",
+  "probe": "https://mcp.atlassian.com/v1/sse",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
   "status": "https://status.atlassian.com/api/v2/status.json"
+ },
+ {
+  "name": "Cloudflare Docs MCP",
+  "cat": "docs",
+  "task": "docs",
+  "kind": "mcp",
+  "probe": "https://docs.mcp.cloudflare.com/mcp",
+  "ok": [
+   200,
+   400,
+   405,
+   406
+  ],
+  "status": "https://www.cloudflarestatus.com/api/v2/status.json"
+ },
+ {
+  "name": "Context7 MCP",
+  "cat": "docs",
+  "task": "docs",
+  "kind": "mcp",
+  "probe": "https://mcp.context7.com/mcp",
+  "ok": [
+   200,
+   400,
+   405,
+   406
+  ],
+  "status": null
+ },
+ {
+  "name": "Hugging Face MCP",
+  "cat": "ml-models",
+  "task": "ml-models",
+  "kind": "mcp",
+  "probe": "https://huggingface.co/mcp",
+  "ok": [
+   200,
+   400,
+   405,
+   406
+  ],
+  "status": null
+ },
+ {
+  "name": "Stripe MCP",
+  "cat": "payments",
+  "task": "payments",
+  "kind": "mcp",
+  "probe": "https://mcp.stripe.com",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": null
+ },
+ {
+  "name": "Vercel MCP",
+  "cat": "infra",
+  "task": "infra",
+  "kind": "mcp",
+  "probe": "https://mcp.vercel.com",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": "https://www.vercel-status.com/api/v2/status.json"
+ },
+ {
+  "name": "Asana MCP",
+  "cat": "productivity",
+  "task": "productivity",
+  "kind": "mcp",
+  "probe": "https://mcp.asana.com/sse",
+  "ok": [
+   200,
+   401,
+   405,
+   406
+  ],
+  "status": null
+ },
+ {
+  "name": "SerpAPI",
+  "cat": "search",
+  "task": "search",
+  "kind": "api",
+  "probe": "https://serpapi.com/search.json?q=test",
+  "ok": [
+   200,
+   401
+  ],
+  "status": "https://status.serpapi.com/api/v2/status.json"
  }
 ]

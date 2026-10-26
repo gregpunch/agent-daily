@@ -1,0 +1,516 @@
+{
+ "schema_version": "1.0",
+ "generated_at": "2026-10-26T11:30:55+00:00",
+ "window_days": 7,
+ "providers": {
+  "OpenAI API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 100,
+   "p95_ms": 172,
+   "incidents": []
+  },
+  "Anthropic API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 126,
+   "p95_ms": 136,
+   "incidents": []
+  },
+  "Hugging Face Hub": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 104,
+   "p95_ms": 112,
+   "incidents": []
+  },
+  "GitHub API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 133,
+   "p95_ms": 251,
+   "incidents": []
+  },
+  "GitHub MCP (remote)": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 275,
+   "p95_ms": 527,
+   "incidents": []
+  },
+  "Linear MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 57,
+   "p95_ms": 107,
+   "incidents": []
+  },
+  "DeepWiki MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 60,
+   "p95_ms": 655,
+   "incidents": []
+  },
+  "Stripe API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 63,
+   "p95_ms": 81,
+   "incidents": []
+  },
+  "Slack API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 125,
+   "p95_ms": 182,
+   "incidents": []
+  },
+  "Discord API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 54,
+   "p95_ms": 102,
+   "incidents": []
+  },
+  "Twilio API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 123,
+   "p95_ms": 185,
+   "incidents": [
+    {
+     "type": "vendor",
+     "start": "2026-10-20T11:36:04+00:00",
+     "end": null,
+     "checks": 6,
+     "detail": "minor",
+     "ongoing": true
+    }
+   ]
+  },
+  "Google APIs": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 123,
+   "p95_ms": 404,
+   "incidents": []
+  },
+  "Cloudflare API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 83,
+   "p95_ms": 135,
+   "incidents": [
+    {
+     "type": "vendor",
+     "start": "2026-10-20T11:36:04+00:00",
+     "end": null,
+     "checks": 6,
+     "detail": "major",
+     "ongoing": true
+    }
+   ]
+  },
+  "Vercel": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 107,
+   "p95_ms": 239,
+   "incidents": []
+  },
+  "Supabase": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 86,
+   "p95_ms": 96,
+   "incidents": []
+  },
+  "Brave Search API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 64,
+   "p95_ms": 237,
+   "incidents": []
+  },
+  "Serper": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 181,
+   "p95_ms": 188,
+   "incidents": []
+  },
+  "Wikipedia API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 100,
+   "p95_ms": 757,
+   "incidents": []
+  },
+  "OpenStreetMap Nominatim": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 39,
+   "p95_ms": 779,
+   "incidents": []
+  },
+  "Atlassian (Jira/Confluence)": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 6,
+   "p50_ms": 144,
+   "p95_ms": 203,
+   "incidents": []
+  },
+  "Resend": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 58,
+   "p95_ms": 58,
+   "incidents": []
+  },
+  "SendGrid": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 50,
+   "p95_ms": 50,
+   "incidents": [
+    {
+     "type": "vendor",
+     "start": "2026-10-26T11:30:55+00:00",
+     "end": null,
+     "checks": 1,
+     "detail": "minor",
+     "ongoing": true
+    }
+   ]
+  },
+  "Postmark": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 95,
+   "p95_ms": 95,
+   "incidents": []
+  },
+  "Mailgun": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 214,
+   "p95_ms": 214,
+   "incidents": []
+  },
+  "Tavily": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 56,
+   "p95_ms": 56,
+   "incidents": []
+  },
+  "Perplexity API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 93,
+   "p95_ms": 93,
+   "incidents": []
+  },
+  "Firecrawl": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 97,
+   "p95_ms": 97,
+   "incidents": []
+  },
+  "Jina Reader": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 129,
+   "p95_ms": 129,
+   "incidents": []
+  },
+  "Browserbase": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 349,
+   "p95_ms": 349,
+   "incidents": []
+  },
+  "Pinecone": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 80,
+   "p95_ms": 80,
+   "incidents": []
+  },
+  "Notion API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 159,
+   "p95_ms": 159,
+   "incidents": []
+  },
+  "Airtable API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 76,
+   "p95_ms": 76,
+   "incidents": []
+  },
+  "Mistral API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 143,
+   "p95_ms": 143,
+   "incidents": []
+  },
+  "Groq API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 109,
+   "p95_ms": 109,
+   "incidents": []
+  },
+  "Together AI": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 180,
+   "p95_ms": 180,
+   "incidents": []
+  },
+  "Replicate": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 100,
+   "p95_ms": 100,
+   "incidents": []
+  },
+  "Cohere API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 71,
+   "p95_ms": 71,
+   "incidents": []
+  },
+  "Google Gemini API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 111,
+   "p95_ms": 111,
+   "incidents": []
+  },
+  "OpenRouter": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 110,
+   "p95_ms": 110,
+   "incidents": []
+  },
+  "DeepSeek API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 366,
+   "p95_ms": 366,
+   "incidents": []
+  },
+  "xAI API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 263,
+   "p95_ms": 263,
+   "incidents": []
+  },
+  "ElevenLabs": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 122,
+   "p95_ms": 122,
+   "incidents": []
+  },
+  "Deepgram": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 345,
+   "p95_ms": 345,
+   "incidents": []
+  },
+  "AssemblyAI": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 484,
+   "p95_ms": 484,
+   "incidents": []
+  },
+  "E2B": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 126,
+   "p95_ms": 126,
+   "incidents": []
+  },
+  "Neon": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 76,
+   "p95_ms": 76,
+   "incidents": []
+  },
+  "Upstash": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 71,
+   "p95_ms": 71,
+   "incidents": []
+  },
+  "Mapbox": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 51,
+   "p95_ms": 51,
+   "incidents": []
+  },
+  "OpenWeather": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 97,
+   "p95_ms": 97,
+   "incidents": []
+  },
+  "Open-Meteo": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 141,
+   "p95_ms": 141,
+   "incidents": []
+  },
+  "HubSpot API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 58,
+   "p95_ms": 58,
+   "incidents": []
+  },
+  "Zapier MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 78,
+   "p95_ms": 78,
+   "incidents": [
+    {
+     "type": "vendor",
+     "start": "2026-10-26T11:30:55+00:00",
+     "end": null,
+     "checks": 1,
+     "detail": "major",
+     "ongoing": true
+    }
+   ]
+  },
+  "Composio": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 144,
+   "p95_ms": 144,
+   "incidents": []
+  },
+  "Telegram Bot API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 440,
+   "p95_ms": 440,
+   "incidents": []
+  },
+  "PayPal API": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 207,
+   "p95_ms": 207,
+   "incidents": []
+  },
+  "Sentry MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 114,
+   "p95_ms": 114,
+   "incidents": []
+  },
+  "Notion MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 91,
+   "p95_ms": 91,
+   "incidents": []
+  },
+  "Atlassian MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 95,
+   "p95_ms": 95,
+   "incidents": []
+  },
+  "Cloudflare Docs MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 90,
+   "p95_ms": 90,
+   "incidents": [
+    {
+     "type": "vendor",
+     "start": "2026-10-26T11:30:55+00:00",
+     "end": null,
+     "checks": 1,
+     "detail": "major",
+     "ongoing": true
+    }
+   ]
+  },
+  "Context7 MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 58,
+   "p95_ms": 58,
+   "incidents": []
+  },
+  "Hugging Face MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 390,
+   "p95_ms": 390,
+   "incidents": []
+  },
+  "Stripe MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 122,
+   "p95_ms": 122,
+   "incidents": []
+  },
+  "Vercel MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 411,
+   "p95_ms": 411,
+   "incidents": []
+  },
+  "Asana MCP": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 85,
+   "p95_ms": 85,
+   "incidents": []
+  },
+  "SerpAPI": {
+   "uptime_7d_pct": 100.0,
+   "checks_7d": 1,
+   "p50_ms": 94,
+   "p95_ms": 94,
+   "incidents": [
+    {
+     "type": "vendor",
+     "start": "2026-10-26T11:30:55+00:00",
+     "end": null,
+     "checks": 1,
+     "detail": "minor",
+     "ongoing": true
+    }
+   ]
+  }
+ }
+}

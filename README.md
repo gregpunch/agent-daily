@@ -1,6 +1,6 @@
 # Agent Daily: is this tool up right now?
 
-**A free, hourly reliability index for the APIs and MCP servers AI agents call**: OpenAI, Anthropic, GitHub (API + MCP), Stripe, Slack, Cloudflare, Brave/Serper search, Linear and DeepWiki MCP, and more (20 tools).
+**A free, hourly reliability index for the APIs and MCP servers AI agents call**: 65 providers across LLMs, search, scraping, email, vector DBs, voice, payments, messaging, maps, CRM, storage and public remote MCP servers, with 7-day uptime, p50/p95 latency and incident history.
 
 Built for agent builders. Check before your agent calls a tool, fall back when a tool is down, and stop burning retries on outages.
 
@@ -26,7 +26,7 @@ Fields: `schema_version`, `generated_at` (UTC), `summary.{up,total}`, and `tools
 **Limits:** these are reachability checks only (an expected HTTP code), not correctness or quality tests. There is a single probe location.
 
 
-A free public status page for 20 tools AI agents depend on. This is Phase 1, a two-week validation.
+A free public status page for 65 tools AI agents depend on. This is Phase 1, a two-week validation.
 
 ## Run locally
 ```
@@ -58,3 +58,12 @@ cd mcp-worker && npm install && npx wrangler dev   # local
 npm test                                           # MCP SDK client check against localhost:8787
 npx wrangler deploy                                # needs CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID
 ```
+
+## MCP tools (v0.2.0)
+Remote endpoint: `https://agent-daily.agentdaily.workers.dev/mcp` (Streamable HTTP, no auth, read-only)
+- `recommend(task)`: maps a phrase or category ("send email", "web search", "llm", "scrape a page") to a category and returns the healthiest provider plus 1-2 fallbacks, with reasons and freshness.
+- `incidents(name?, days=7)`: outages and vendor incidents with UTC start/end.
+- `list_tools(category?)`: matches either `category` or routing `task`.
+- `tool_status(name)`: full record, including 7-day uptime and p50/p95.
+
+Data: `status.json` (current + 7d stats) and `history.json` (incidents), both regenerated hourly.

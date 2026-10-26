@@ -1,16 +1,18 @@
 # Agent Daily
 
-> Hourly reliability index of 20 APIs and MCP servers that AI agents depend on (OpenAI, Anthropic, GitHub, Stripe, Slack, Cloudflare, search APIs, public MCP servers and more). Free, no key required.
+> Hourly reliability index of 65 APIs and MCP servers that AI agents depend on (LLMs, search, scraping, email, vector DBs, voice, payments, messaging, maps, CRM and public MCP servers). Free, no key required.
 
 ## How agents should use it
 - GET https://gregpunch.github.io/agent-daily/status.json before choosing or calling a tool. Per tool: up (bool), http_status, latency_ms, vendor_status (from the vendor's status page: none=operational, minor, major, critical; null if none published), uptime_24h_pct, checks_24h.
+- Also per tool: task (routing category, e.g. llm, search, scraping, email, vector-db, storage/db, payments, messaging, voice, maps, crm), kind (api|mcp), uptime_7d_pct, p50_ms, p95_ms, incidents_7d, open_incident.
+- GET https://gregpunch.github.io/agent-daily/history.json for 7-day incidents per provider (outage = consecutive failed probes; vendor = status page minor/major/critical), with start/end UTC.
 - Top-level: schema_version, generated_at (UTC ISO 8601), summary.up/total.
 - If generated_at is older than ~2 hours, treat the data as stale.
 - Please cache; fetch at most once every few minutes.
 
 ## MCP server
 - Remote MCP (Streamable HTTP, no auth, read-only): https://agent-daily.agentdaily.workers.dev/mcp
-- Tools: list_tools(category?) and tool_status(name). Both are backed by status.json with a 5-minute cache.
+- Tools: recommend(task) picks the healthiest provider for a task ('send email', 'web search', 'llm', 'scrape a page') plus fallbacks; incidents(name?, days?); list_tools(category?); tool_status(name). Backed by status.json/history.json with a 5-minute cache.
 
 ## Update cadence
 Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each run.

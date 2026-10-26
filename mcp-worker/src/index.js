@@ -1,9 +1,15 @@
 // Agent Daily MCP server: stateless, read-only, Streamable HTTP (JSON responses).
 const STATUS_URL = "https://gregpunch.github.io/agent-daily/status.json";
 const PROTOCOLS = ["2025-06-18", "2025-03-26", "2024-11-05"];
-const INFO = { name: "agent-daily", title: "Agent Daily", version: "0.1.0" };
+const INFO = { name: "agent-daily", title: "Agent Daily", version: "0.2.0" };
 const RO = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true };
 const TOOLS = [
+  { name: "recommend", title: "Recommend a healthy provider for a task",
+    description: "Before calling an external API, ask which provider to use. Give a task phrase or category (e.g. 'send email', 'web search', 'llm', 'scrape a page', 'vector db', 'speech to text', 'payments', 'geocode'). Returns the top healthy pick plus 1-2 fallbacks ranked by live status, vendor status, 7-day uptime and latency, with a reason and data freshness.",
+    inputSchema: { type: "object", properties: { task: { type: "string", description: "Task phrase or category" } }, required: ["task"] }, annotations: RO },
+  { name: "incidents", title: "Recent incidents",
+    description: "Outages (consecutive failed probes) and vendor status-page incidents with UTC start/end over the last N days (max 7). Optional provider name filter. Use to judge whether a failing API is a known incident.",
+    inputSchema: { type: "object", properties: { name: { type: "string" }, days: { type: "number", default: 7 } } }, annotations: RO },
   { name: "list_tools", title: "List monitored tools",
     description: "List the APIs and MCP servers Agent Daily monitors, with current up/down, latency and vendor status. Call before choosing a provider. Optional category filter (e.g. LLM, MCP, Search, Payments, Comms, Infra).",
     inputSchema: { type: "object", properties: { category: { type: "string", description: "Case-insensitive category filter" } } }, annotations: RO },
@@ -22,16 +28,73 @@ async function status() {
   if (!r.ok) throw new Error(`status.json HTTP ${r.status}`);
   const d = await r.json(); mem = { t: Date.now(), d }; return d;
 }
+const HISTORY_URL = "https://gregpunch.github.io/agent-daily/history.json";
+let hmem = null;
+async function history() {
+  if (hmem && Date.now() - hmem.t < 300e3) return hmem.d;
+  const r = await fetch(HISTORY_URL, { cf: { cacheTtl: 300, cacheEverything: true } });
+  if (!r.ok) throw new Error(`history.json HTTP ${r.status}`);
+  const d = await r.json(); hmem = { t: Date.now(), d }; return d;
+}
+const SYN = [
+  [/e-?mail|smtp|newsletter|inbox/, "email"], [/scrap|crawl|extract|read (a )?(web)?page|fetch (a )?(url|page)|html|markdown/, "scraping"],
+  [/search|google|serp|look ?up|find (info|on the web)|news/, "search"], [/vector|embedding store|similarity|semantic index|rag/, "vector-db"],
+  [/speech|voice|tts|text.to.speech|transcri|stt|audio/, "voice"], [/llm|chat|completion|language model|generate text|gpt|summari|reason/, "llm"],
+  [/pay|charge|checkout|invoice|billing|subscription/, "payments"], [/sms|text message|phone/, "sms"],
+  [/slack|discord|telegram|message|notify|chat app/, "messaging"], [/map|geocod|address|route|direction|location/, "maps"],
+  [/weather|forecast|temperature/, "weather"], [/crm|contact|lead|deal|hubspot/, "crm"], [/database|postgres|sql|redis|table|storage|db\b|airtable/, "storage/db"],
+  [/sandbox|execute code|run code|code.exec|python/, "code-exec"], [/browser|headless|automate a site/, "browser"],
+  [/docs|documentation|library reference/, "docs"], [/zap|workflow|automation|integrat/, "automation"], [/github|repo|pull request|code/, "code"],
+  [/notion|jira|task|ticket|project|asana|linear/, "productivity"], [/deploy|host|cdn|dns|infra/, "infra"], [/wiki|encyclop|fact/, "knowledge"],
+  [/model hub|hugging ?face|ml model/, "ml-models"], [/error|monitor|sentry/, "monitoring"],
+];
+function resolveTask(q, cats) {
+  const s = q.toLowerCase().trim();
+  if (cats.includes(s)) return s;
+  for (const [re, c] of SYN) if (re.test(s) && cats.includes(c)) return c;
+  return cats.find(c => s.includes(c)) || null;
+}
+const VPEN = { minor: 15, major: 60, critical: 80, unavailable: 2 };
+function score(t) {
+  return (t.up ? 100 : 0) - (VPEN[t.vendor_status] || 0) - (t.open_incident ? 20 : 0) + ((t.uptime_7d_pct ?? 95) - 95) * 2
+    - Math.min(30, (t.p50_ms ?? t.latency_ms ?? 1000) / 100);
+}
+function why(t) {
+  return `${t.up ? "up" : "DOWN"} (HTTP ${t.http_status}), vendor ${t.vendor_status ?? "n/a"}, 7d uptime ${t.uptime_7d_pct ?? "?"}%, p50 ${t.p50_ms ?? t.latency_ms ?? "?"} ms`;
+}
 const stale = (d) => Date.now() - Date.parse(d.generated_at) > 2 * 3600e3;
 const text = (o) => ({ content: [{ type: "text", text: JSON.stringify(o, null, 1) }], structuredContent: o });
 
 async function callTool(name, a = {}) {
   const d = await status();
   const meta = { generated_at: d.generated_at, stale: stale(d), methodology: d.methodology };
+  if (name === "recommend") {
+    if (!a.task) return { isError: true, content: [{ type: "text", text: "task is required" }] };
+    const cats = [...new Set(d.tools.map(t => t.task).filter(Boolean))];
+    const cat = resolveTask(String(a.task), cats);
+    if (!cat) return { isError: true, content: [{ type: "text", text: `Could not map '${a.task}' to a category. Known: ${cats.join(", ")}` }] };
+    const ranked = d.tools.filter(t => t.task === cat).map(t => ({ t, s: score(t) })).sort((x, y) => y.s - x.s);
+    const healthy = ranked.filter(x => x.t.up && !["major", "critical"].includes(x.t.vendor_status));
+    const pick = (healthy.length ? healthy : ranked).slice(0, 3).map(({ t, s }) => ({ name: t.name, kind: t.kind, score: Math.round(s), reason: why(t) }));
+    return text({ ...meta, task: a.task, category: cat, top_pick: pick[0] || null, fallbacks: pick.slice(1),
+      note: healthy.length ? `Ranked ${ranked.length} providers in '${cat}'. Probes are unauthenticated reachability checks; you still need your own API key.` : `No healthy provider in '${cat}' right now; showing best available.` });
+  }
+  if (name === "incidents") {
+    const h = await history(), days = Math.min(7, Math.max(1, Number(a.days) || 7));
+    const since = new Date(Date.parse(h.generated_at) - days * 864e5).toISOString();
+    const q = a.name?.toLowerCase();
+    const out = [];
+    for (const [n, p] of Object.entries(h.providers)) {
+      if (q && !n.toLowerCase().includes(q)) continue;
+      for (const i of p.incidents) if ((i.end || "9999") >= since) out.push({ provider: n, ...i });
+    }
+    out.sort((x, y) => (y.start > x.start ? 1 : -1));
+    return text({ generated_at: h.generated_at, stale: stale(h), days, count: out.length, incidents: out.slice(0, 100) });
+  }
   if (name === "list_tools") {
     const c = a.category?.toLowerCase();
-    const tools = d.tools.filter(t => !c || t.category.toLowerCase() === c)
-      .map(({ name, category, up, latency_ms, vendor_status }) => ({ name, category, up, latency_ms, vendor_status }));
+    const tools = d.tools.filter(t => !c || t.category.toLowerCase() === c || t.task?.toLowerCase() === c)
+      .map(({ name, category, task, kind, up, latency_ms, vendor_status, uptime_7d_pct }) => ({ name, category, task, kind, up, latency_ms, vendor_status, uptime_7d_pct }));
     return text({ ...meta, count: tools.length, tools });
   }
   if (name === "tool_status") {
@@ -54,7 +117,7 @@ async function rpc(m) {
     case "initialize": {
       const v = PROTOCOLS.includes(params.protocolVersion) ? params.protocolVersion : PROTOCOLS[0];
       return ok({ protocolVersion: v, capabilities: { tools: { listChanged: false } }, serverInfo: INFO,
-        instructions: "Check tool_status before calling an external API; route around tools that are down or whose vendor_status is major/critical." });
+        instructions: "Call recommend(task) to pick a healthy provider before calling an external API, or tool_status(name) to check a specific one; route around tools that are down or whose vendor_status is major/critical. incidents() lists recent outages." });
     }
     case "ping": return ok({});
     case "tools/list": return ok({ tools: TOOLS });

@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.gregpunch/agent-daily",
   "title": "Agent Daily",
-  "description": "Hourly reliability index for APIs and MCP servers AI agents use: up/down, latency, vendor status.",
-  "version": "0.1.0",
+  "description": "Live health of 65 APIs and MCP servers agents use; recommend(task) picks a healthy provider.",
+  "version": "0.2.0",
   "repository": { "url": "https://github.com/gregpunch/agent-daily", "source": "github" },
   "websiteUrl": "https://gregpunch.github.io/agent-daily/",
   "remotes": [ { "type": "streamable-http", "url": "https://agent-daily.agentdaily.workers.dev/mcp" } ]

@@ -16,8 +16,8 @@ def vendor_status(t):
     except Exception as e: return "unavailable"
     return None
 ts = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
-for t in json.load(open(D/"tools.json")):
-    http=lat=None; err=None
+def probe(t):
+    http=lat=None; err=None; r=None
     try:
         s=time.perf_counter(); h=dict(UA)
         if t.get("auth")=="github" and os.environ.get("GITHUB_TOKEN"): h["Authorization"]="Bearer "+os.environ["GITHUB_TOKEN"]
@@ -30,8 +30,10 @@ for t in json.load(open(D/"tools.json")):
         try: login=r.json().get("login")
         except Exception: login=None
         if login!=t["expect_login"]: up=0; err=f"login mismatch: {login}"
-        else: print(f"verified login={login}")
-    v = vendor_status(t)
-    db.execute("INSERT INTO checks VALUES(?,?,?,?,?,?,?,?)",(ts,t["name"],t["cat"],up,http,lat,v,err))
-    print(f"{t['name']:28} up={up} http={http} {lat}ms vendor={v} {err or ''}")
+    return t,up,http,lat,vendor_status(t),err
+from concurrent.futures import ThreadPoolExecutor
+with ThreadPoolExecutor(16) as ex:
+    for t,up,http,lat,v,err in ex.map(probe, json.load(open(D/"tools.json"))):
+        db.execute("INSERT INTO checks VALUES(?,?,?,?,?,?,?,?)",(ts,t["name"],t["cat"],up,http,lat,v,err))
+        print(f"{t['name']:28} up={up} http={http} {lat}ms vendor={v} {err or ''}")
 db.commit()
