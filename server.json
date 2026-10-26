@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.gregpunch/agent-daily",
   "title": "Agent Daily",
-  "description": "Live health of 65 agent APIs and MCPs plus a 15-min LLM leaderboard; recommend(task) picks a provider.",
+  "description": "Live health of 65 agent APIs/MCPs plus a 15-min LLM leaderboard; recommend(task) picks a provider.",
   "version": "0.3.0",
   "repository": {
     "url": "https://github.com/gregpunch/agent-daily",
