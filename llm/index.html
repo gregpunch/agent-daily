@@ -1,30 +1,53 @@
-<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>LLM Live Probe: which AI models are up, correct and fast right now | Agent Daily</title><meta name=description content="Every 15 minutes we ask ~20 popular AI models to reply 'pong' and measure correctness, speed and cost. Live leaderboard.">
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>LLM Live Probe: which AI models are up, correct and fast right now | Agent Daily</title>
+<meta name=description content="Every 15 minutes we ask ~20 popular AI models to reply 'pong' and measure correctness, speed and cost. Live leaderboard.">
 <meta property=og:title content="LLM Live Probe: live AI model leaderboard"><meta property=og:description content="Every 15 minutes ~20 popular LLMs get the same tiny prompt. Live correctness, time to first token, latency, cost and uptime."><meta property=og:type content=website><meta property=og:url content="https://gregpunch.github.io/agent-daily/llm/"><meta property=og:image content="https://gregpunch.github.io/agent-daily/preview.png"><meta name=twitter:card content=summary_large_image><link rel=canonical href="https://gregpunch.github.io/agent-daily/llm/"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "LLM Live Probe leaderboard", "description": "Every 15 minutes ~20 popular LLMs (OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek, xAI, Qwen and more) are sent the same one-word prompt; correctness, time to first token, total latency, cost and uptime are recorded.", "url": "https://gregpunch.github.io/agent-daily/llm/", "license": "https://creativecommons.org/licenses/by/4.0/", "isAccessibleForFree": true, "keywords": ["LLM latency", "LLM uptime", "time to first token", "LLM leaderboard", "OpenRouter"], "measurementTechnique": "Streaming chat completion with prompt 'Reply with exactly the word pong', exact-match scoring", "distribution": [{"@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://gregpunch.github.io/agent-daily/llm/leaderboard.json"}], "creator": {"@type": "Organization", "name": "Agent Daily", "url": "https://gregpunch.github.io/agent-daily/"}}</script>
-<link rel=stylesheet href=style.css><link rel=alternate type=application/json href=leaderboard.json></head><body><div class=wrap>
-<nav><a href="../">← Agent Daily</a><a href="methods.html">How it works</a><a href="leaderboard.json">JSON</a></nav>
-<h1>LLM Live Probe</h1><div class=sub>Every 15 minutes we send the same tiny prompt to popular AI models and time the answer. Which ones are up, correct and fast right now?</div>
-<div id=state></div>
-<p><label>Provider: <select id=prov><option value="">All</option></select></label> <small>Click a column header to sort.</small></p>
-<table id=t><thead><tr>
-<th data-k=rank>#</th><th data-k=model>Model</th><th data-k=provider>Provider</th><th data-k=score>Score</th>
-<th data-k=correct_pct_24h>Correct 24h</th><th data-k=p50_ttft_ms>First token</th><th data-k=p50_total_ms>Total time</th>
-<th data-k=cost_per_1k_calls_usd>Cost / 1k calls</th><th data-k=uptime_pct_24h>Uptime 24h</th><th>Last</th></tr></thead><tbody></tbody></table>
-<p class=muted>Score = 60% correctness + 40% speed. Speed = how a model's median first-token time and total time rank against the others (100 = fastest). <a href="methods.html">Details</a>.</p>
+<link rel=stylesheet href=style.css><link rel=alternate type=application/json href=leaderboard.json></head><body>
+<header class=hero><div class=wrap>
+<nav><a href="../">Agent Daily</a><a href="methods.html">How it works</a><a href="leaderboard.json">JSON</a></nav>
+<h1>Which AI models are working right now?</h1>
+<p class=lead>Every 15 minutes we send ~20 popular AI models the same tiny test, <q>Reply with exactly the word pong</q>, and time the answer. This is a live check of who's <b>up</b>, <b>following instructions</b> and <b>fast</b>, not a test of how smart they are.</p>
+<div id=state class=state></div></div></header>
+<main class=wrap>
+<section id=cards class=cards></section>
+<section id=factsec hidden><h2>Did you know?</h2><ul id=facts class=facts></ul></section>
+<h2>Leaderboard</h2>
+<div class=controls><label>Provider <select id=prov><option value="">All providers</option></select></label><span class=muted>Tap a column to sort</span></div>
+<div class=tablewrap><table id=t><thead><tr>
+<th data-k=rank>#</th><th data-k=model>Model</th><th data-k=score>Score</th>
+<th data-k=correct_pct_24h>Correct</th><th data-k=p50_ttft_ms>First token</th><th data-k=p50_total_ms class=hm>Total</th>
+<th data-k=cost_per_1k_calls_usd class=hm>Cost / 1k</th><th data-k=uptime_pct_24h class=hm>Uptime</th><th>Now</th></tr></thead><tbody></tbody></table></div>
+<p class=muted>Score = 60% correctness (last 24h) + 40% speed (how fast it starts and finishes compared with the others). <a href="methods.html">How we measure</a>.</p>
+</main>
 <script>
-let D,k="score",asc=false;const f=(v,s="")=>v==null?"—":v+s;
-fetch("leaderboard.json",{cache:"no-store"}).then(r=>r.json()).then(d=>{D=d;
+let D,k="score",asc=false;const f=(v,s="")=>v==null?"—":v+s;const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const P={openai:"OpenAI",anthropic:"Anthropic",google:"Google","meta-llama":"Meta",mistralai:"Mistral",deepseek:"DeepSeek","x-ai":"xAI",qwen:"Qwen",cohere:"Cohere",moonshotai:"Moonshot","z-ai":"Z.ai",amazon:"Amazon"};
+const pn=p=>P[p]||p, short=m=>m.split("/").pop();
+const link=m=>`<a href="model.html?id=${encodeURIComponent(m.file)}">${esc(short(m.model))}</a>`;
+Promise.all([fetch("leaderboard.json",{cache:"no-store"}).then(r=>r.json()),fetch("facts.json",{cache:"no-store"}).then(r=>r.ok?r.json():{facts:[]}).catch(()=>({facts:[]}))]).then(([d,fx])=>{D=d;
  const st=document.getElementById("state");
- if(!d.models.length){st.innerHTML=`<div class=empty><b>Awaiting first probe.</b> The probe is set up but hasn't recorded any results yet, so there is nothing to rank. This page fills in automatically after the first run. No sample or placeholder data is shown.</div>`;}
- else st.innerHTML=`<div class=banner><b>${d.models.length}</b> models ranked · last probe ${new Date(d.last_probe_at).toLocaleString()}</div>`;
- const ps=[...new Set(d.models.map(m=>m.provider))].sort();document.getElementById("prov").innerHTML+=ps.map(p=>`<option>${p}</option>`).join("");draw();});
+ if(!d.models.length){st.innerHTML=`<div class=empty><b>Awaiting first probe.</b> Nothing has been measured yet, so nothing is ranked. No sample data is shown.</div>`;return;}
+ const up=d.models.filter(m=>m.last.ok).length;
+ st.innerHTML=`<span class=pill><span class="dot ok"></span>${up} of ${d.models.length} models passed the latest probe</span><span class=pill>Updated ${new Date(d.last_probe_at).toLocaleString([], {dateStyle:"medium",timeStyle:"short"})}</span>`;
+ const ms=d.models, by=(a,b)=>ms.filter(m=>m[a]!=null).sort(b)[0];
+ const fast=by("p50_ttft_ms",(a,b)=>a.p50_ttft_ms-b.p50_ttft_ms), rel=[...ms].sort((a,b)=>b.correct_pct_24h-a.correct_pct_24h||b.probes_24h-a.probes_24h||a.p50_total_ms-b.p50_total_ms)[0];
+ const cheap=ms.filter(m=>m.correct_pct_24h===100&&m.cost_per_1k_calls_usd!=null).sort((a,b)=>a.cost_per_1k_calls_usd-b.cost_per_1k_calls_usd)[0];
+ const card=(t,m,v,cls="")=>m?`<div class="card ${cls}"><small>${t}</small><b>${link(m)}</b><span>${pn(m.provider)} · ${v}</span></div>`:"";
+ const best=p=>ms.filter(m=>m.provider===p).sort((a,b)=>a.rank-b.rank)[0];
+ let c=card("🏆 Top score",ms[0],`score ${ms[0].score}`,"hl")+card("⚡ Fastest to answer",fast,`${fast?.p50_ttft_ms} ms first token`)+card("✅ Most reliable",rel,`${rel.correct_pct_24h}% correct`)+(cheap?card("💸 Cheapest perfect record",cheap,`$${cheap.cost_per_1k_calls_usd} / 1k calls`):"");
+ c+=`<div class="card big"><small>Where the big names rank</small>${["openai","anthropic","google","x-ai"].map(p=>{const m=best(p);return m?`<div class=row><span>${pn(p)}</span><span>${link(m)}</span><b>#${m.rank}</b></div>`:""}).join("")}</div>`;
+ document.getElementById("cards").innerHTML=c;
+ if(fx.facts?.length){document.getElementById("factsec").hidden=false;document.getElementById("facts").innerHTML=fx.facts.map(x=>`<li>${esc(x.text)}</li>`).join("");}
+ [...new Set(ms.map(m=>m.provider))].sort().forEach(p=>document.getElementById("prov").innerHTML+=`<option value="${p}">${pn(p)}</option>`);draw();});
 document.getElementById("prov").onchange=draw;
-document.querySelectorAll("th[data-k]").forEach(th=>th.onclick=()=>{const n=th.dataset.k;if(k===n)asc=!asc;else{k=n;asc=["rank","model","provider","p50_ttft_ms","p50_total_ms","cost_per_1k_calls_usd"].includes(n);}draw();});
+document.querySelectorAll("th[data-k]").forEach(th=>th.onclick=()=>{const n=th.dataset.k;if(k===n)asc=!asc;else{k=n;asc=["rank","model","p50_ttft_ms","p50_total_ms","cost_per_1k_calls_usd"].includes(n);}draw();});
 function draw(){if(!D)return;const p=document.getElementById("prov").value;
  const ms=D.models.filter(m=>!p||m.provider===p).sort((a,b)=>{let x=a[k],y=b[k];if(x==null)return 1;if(y==null)return -1;return (x>y?1:x<y?-1:0)*(asc?1:-1);});
- document.querySelectorAll("th[data-k]").forEach(th=>th.className=th.dataset.k===k?"s"+(asc?" asc":""):"");
- document.querySelector("#t tbody").innerHTML=ms.map(m=>`<tr><td>${m.rank}</td><td><a href="model.html?id=${encodeURIComponent(m.file)}">${m.model}</a>${m.route==="direct"?" <small>(direct)</small>":""}</td><td>${m.provider}</td>
- <td><b>${m.score}</b><br><small>correct ${m.correctness_score} · speed ${m.speed_score}</small></td><td>${f(m.correct_pct_24h,"%")} <small>(${m.probes_24h})</small></td>
- <td>${f(m.p50_ttft_ms," ms")}</td><td>${f(m.p50_total_ms," ms")}</td><td>${m.cost_per_1k_calls_usd==null?"—":"$"+m.cost_per_1k_calls_usd}</td><td>${f(m.uptime_pct_24h,"%")}</td>
- <td><span class="dot ${m.last.ok?"ok":"bad"}" title="${m.last.error_type||"pass"} @ ${m.last.ts}"></span></td></tr>`).join("");}
-</script></div></body></html>
+ document.querySelectorAll("th[data-k]").forEach(th=>th.classList.toggle("s",th.dataset.k===k)||th.classList.toggle("asc",th.dataset.k===k&&asc));
+ document.querySelectorAll("th[data-k]").forEach(th=>{th.classList.toggle("s",th.dataset.k===k);th.classList.toggle("asc",th.dataset.k===k&&asc);});
+ document.querySelector("#t tbody").innerHTML=ms.map(m=>`<tr><td class=rk>${m.rank}</td><td>${link(m)}<div class=sm>${pn(m.provider)}${m.route==="direct"?" · direct":""}</div></td>
+ <td><div class=score>${m.score}</div><div class=split><i style="width:${m.correctness_score*0.6}%" class=c title="correctness ${m.correctness_score}"></i><i style="width:${m.speed_score*0.4}%" class=sp title="speed ${m.speed_score}"></i></div><div class=sm>correct ${m.correctness_score} · speed ${m.speed_score}</div></td>
+ <td>${f(m.correct_pct_24h,"%")}<div class=sm>${m.probes_24h} probes</div></td><td>${f(m.p50_ttft_ms," ms")}</td><td class=hm>${f(m.p50_total_ms," ms")}</td>
+ <td class=hm>${m.cost_per_1k_calls_usd==null?"—":"$"+m.cost_per_1k_calls_usd}</td><td class=hm>${f(m.uptime_pct_24h,"%")}</td>
+ <td><span class="dot ${m.last.ok?"ok":"bad"}" title="${esc(m.last.error_type||"pass")}"></span></td></tr>`).join("");}
+</script></body></html>

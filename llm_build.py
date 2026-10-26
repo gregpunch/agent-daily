@@ -66,6 +66,34 @@ for s in stats:
         "errors_24h": eb(r24), "errors_7d": eb(rs),
         "last_50": [{k: r[k] for k in ("ts", "ok", "reply", "http", "error_type", "detail", "ttft_ms", "total_ms", "tok_in", "tok_out", "cost")} for r in reversed(rs[-50:])]},
         open(OUT/"models"/f"{s['file']}.json", "w"), indent=1)
+# ---- facts (derived only from measured data) ----
+facts = []
+if stats:
+    n = len(stats)
+    sp = sorted([x for x in stats if x["p50_ttft_ms"] is not None], key=lambda x: x["p50_ttft_ms"])
+    spr = {x["id"]: i+1 for i, x in enumerate(sp)}
+    def F(key, text, **data): facts.append({"key": key, "text": text, "data": data})
+    if sp:
+        a, z = sp[0], sp[-1]
+        F("fastest", f"{a['model']} is the fastest to start answering: median {a['p50_ttft_ms']} ms to first token.", model=a["id"], p50_ttft_ms=a["p50_ttft_ms"])
+        if len(sp) > 1 and a["p50_ttft_ms"]:
+            F("spread", f"The slowest model ({z['model']}, {z['p50_ttft_ms']} ms) takes {z['p50_ttft_ms']/a['p50_ttft_ms']:.1f}x longer to start answering than the fastest ({a['p50_ttft_ms']} ms).", fastest=a["id"], slowest=z["id"], ratio=round(z["p50_ttft_ms"]/a["p50_ttft_ms"], 1))
+    perfect = [x for x in stats if x["correct_pct_24h"] == 100]
+    F("perfect", f"{len(perfect)} of {n} models answered exactly 'pong' on every probe in the last 24 hours.", perfect=len(perfect), total=n)
+    worst = min(stats, key=lambda x: x["correct_pct_24h"])
+    if worst["correct_pct_24h"] < 100:
+        F("least_reliable", f"{worst['model']} got the one-word answer right in only {worst['correct_pct_24h']}% of {worst['probes_24h']} probes in 24h.", model=worst["id"], correct_pct_24h=worst["correct_pct_24h"], probes=worst["probes_24h"])
+    cheap = sorted([x for x in perfect if x["cost_per_1k_calls_usd"] is not None], key=lambda x: x["cost_per_1k_calls_usd"])
+    if cheap:
+        c = cheap[0]; F("cheapest_perfect", f"The cheapest model with a perfect 24h record is {c['model']} at ${c['cost_per_1k_calls_usd']} per 1,000 probe calls.", model=c["id"], cost_per_1k_calls_usd=c["cost_per_1k_calls_usd"])
+    for prov, label in (("openai", "OpenAI"), ("anthropic", "Anthropic"), ("google", "Google"), ("x-ai", "xAI"), ("meta-llama", "Meta"), ("deepseek", "DeepSeek")):
+        ms = [x for x in stats if x["provider"] == prov and x["route"] == "openrouter"]
+        if not ms: continue
+        b = min(ms, key=lambda x: x["rank"])
+        f = min([x for x in ms if x["id"] in spr], key=lambda x: spr[x["id"]], default=None)
+        F(f"provider_{prov}", f"{label}'s best-ranked model is {b['model']} at #{b['rank']} of {n} overall" + (f"; its fastest, {f['model']}, ranks #{spr[f['id']]} for speed ({f['p50_ttft_ms']} ms to first token)." if f else "."),
+          provider=prov, best=b["id"], best_rank=b["rank"], fastest=f["id"] if f else None, speed_rank=spr.get(f["id"]) if f else None, of=n)
+json.dump({"generated_at": iso(now), "basis": "Computed from the last 24h of probes; see methods.html. No figures are estimated.", "facts": facts}, open(OUT/"facts.json", "w"), indent=1)
 for f in ("index.html", "model.html", "style.css"): shutil.copy(D/"llm"/f, OUT/f)
 models_list = "".join(f"<li><code>{html.escape(m)}</code></li>" for m in CFG["openrouter"])
 direct_list = "".join(f"<li>{d['provider']}: <code>{d['model']}</code> (runs only if {d['key']} is configured)</li>" for d in CFG["direct"])
