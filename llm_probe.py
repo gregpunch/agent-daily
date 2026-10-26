@@ -87,7 +87,7 @@ if ORK:
         jobs.append((m, m, m.split("/")[0], "openrouter", lambda m=m: stream("https://openrouter.ai/api/v1/chat/completions",
             {"Authorization": f"Bearer {ORK}", "HTTP-Referer": "https://gregpunch.github.io/agent-daily/llm/", "X-Title": "Agent Daily LLM probe"},
             {"model": m, "messages": MSG, "temperature": 0, "max_tokens": MAXT, "stream": True, "usage": {"include": True},
-             "reasoning": {"effort": "low", "exclude": True}}, p_oa), m))
+             **CFG.get("overrides", {}).get(m, {})}, p_oa), m))
 else: print("OPENROUTER_API_KEY missing: skipping OpenRouter probes")
 for d in CFG["direct"]:
     k = os.environ.get(d["key"])

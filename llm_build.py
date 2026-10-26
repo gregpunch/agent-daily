@@ -69,5 +69,5 @@ for f in ("index.html", "model.html", "style.css"): shutil.copy(D/"llm"/f, OUT/f
 models_list = "".join(f"<li><code>{html.escape(m)}</code></li>" for m in CFG["openrouter"])
 direct_list = "".join(f"<li>{d['provider']}: <code>{d['model']}</code> (runs only if {d['key']} is configured)</li>" for d in CFG["direct"])
 (OUT/"methods.html").write_text((D/"llm/methods.tmpl.html").read_text().replace("{{MODELS}}", models_list).replace("{{DIRECT}}", direct_list)
-    .replace("{{MAXT}}", str(CFG["max_tokens"])).replace("{{CAP}}", str(CFG["monthly_cap_usd"])))
+    .replace("{{MAXT}}", str(CFG["max_tokens"])).replace("{{OVERRIDES}}", ", ".join(f"<code>{html.escape(k)}</code> ({html.escape(json.dumps(v['reasoning']))})" for k,v in CFG.get("overrides",{}).items()) or "none").replace("{{CAP}}", str(CFG["monthly_cap_usd"])))
 print(f"llm: {len(stats)} models ranked, {len(rows)} probes in 7d, status={LB['status']}")
