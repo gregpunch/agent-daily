@@ -21,7 +21,7 @@ jobs:
         with: {path: llm.db, key: "llm-none-${{ github.run_id }}", restore-keys: "llm-"}
       - name: Check + build
         env: {GITHUB_TOKEN: "${{ secrets.GH_CHECK_TOKEN }}"}
-        run: python check.py && python build.py && python llm_build.py
+        run: python check.py && python llm_build.py && python build.py
       - uses: actions/cache/save@v4
         with: {path: results.db, key: "results-${{ github.run_id }}"}
       - uses: actions/configure-pages@v5

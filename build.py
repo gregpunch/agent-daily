@@ -105,6 +105,9 @@ Checks run hourly (GitHub Actions cron); the page and JSON are regenerated each 
 - [Tool list and check method](https://github.com/gregpunch/agent-daily/blob/main/tools.md)
 - [Source](https://github.com/gregpunch/agent-daily)
 """)
+LLM_PAGES=[]
+try: LLM_PAGES=["llm/model.html?id="+m["file"] for m in json.load(open(D/"site/llm/leaderboard.json"))["models"]]
+except Exception: pass
 (D/"site/robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}sitemap.xml\n")
-(D/"site/sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{BASE}{p}</loc><lastmod>{last[:10]}</lastmod><changefreq>hourly</changefreq></url>" for p in ["","status.json","history.json","llms.txt","llm/","llm/methods.html","llm/leaderboard.json"])+"</urlset>\n")
+(D/"site/sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{BASE}{p}</loc><lastmod>{last[:10]}</lastmod><changefreq>hourly</changefreq></url>" for p in ["","status.json","history.json","llms.txt","llm/","llm/methods.html","llm/leaderboard.json"]+LLM_PAGES)+"</urlset>\n")
 print("wrote status.json llms.txt robots.txt sitemap.xml")

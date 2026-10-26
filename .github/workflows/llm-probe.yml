@@ -31,8 +31,8 @@ jobs:
         with: {path: llm.db, key: "llm-${{ github.run_id }}"}
       - name: Build site
         run: |
-          if [ -f results.db ]; then python build.py; fi
           python llm_build.py
+          if [ -f results.db ]; then python build.py; fi
       - uses: actions/upload-pages-artifact@v3
         with: {path: site}
   deploy:
